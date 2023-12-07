@@ -6,12 +6,41 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pretty": "prettier --config .prettierrc --write \"./**/*.{js,jsx,ts,tsx,json}\""
   },
   "dependencies": {
+    "@download/blockies": "^1.0.3",
+    "@emotion/cache": "^11.10.3",
+    "@emotion/react": "^11.10.4",
+    "@emotion/server": "^11.10.0",
+    "@emotion/styled": "^11.10.4",
+    "@mui/base": "^5.0.0-beta.16",
+    "@mui/icons-material": "5.10.6",
+    "@mui/lab": "5.0.0-alpha.101",
+    "@mui/material": "5.10.7",
+    "@mui/x-date-pickers": "5.0.18",
+    "@web3-onboard/core": "^2.20.3",
+    "@web3-onboard/fortmatic": "^2.0.14",
+    "@web3-onboard/injected-wallets": "^2.9.0",
+    "@web3-onboard/ledger": "^2.4.6",
+    "@web3-onboard/react": "^2.3.5",
+    "@web3-onboard/trezor": "^2.3.1",
+    "aws-sdk": "^2.1236.0",
+    "cookie": "^0.5.0",
+    "decimal.js-light": "^2.5.1",
+    "ethers": "5.7.2",
+    "from-exponential": "1.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "mongoose": "^6.6.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.0.3"
+    "next": "12.3.1",
+    "nextjs-progressbar": "^0.0.16",
+    "react-query": "^3.39.2",
+    "siwe": "1.1.6"
   },
   "devDependencies": {
     "typescript": "^5",
@@ -19,6 +48,10 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
+    "bson": "^5.3.0",
+    "prettier": "^3.0.3",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "eslint-config-next": "14.0.3"
   }
 }

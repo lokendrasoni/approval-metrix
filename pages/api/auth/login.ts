@@ -1,6 +1,5 @@
 import cookie from "cookie";
-import { ethers } from "ethers";
-import { getAddress } from "ethers/lib/utils";
+import { ethers, getAddress } from "ethers";
 import jwt from "jsonwebtoken";
 import Wallet from "models/Wallet";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -34,7 +33,9 @@ const login = async (req: NextApiRequest, res: NextResponse) => {
     } = req.body;
 
     if (!walletAddress || !signedMessage || !networkId) {
-        return res.status(400).json({ success: false, message: "Insufficient parameters provided!" });
+        return res
+            .status(400)
+            .json({ success: false, message: "Insufficient parameters provided!" });
     }
 
     const AUTH_MSG: string = process.env.AUTH_MSG || ""; // auth_msg signed in case of Argent
@@ -43,7 +44,7 @@ const login = async (req: NextApiRequest, res: NextResponse) => {
 
     // validate the message signed by the wallet and throw error if invalid
     if (isArgent) {
-        const hashMessage = ethers.utils.hashMessage(AUTH_MSG);
+        const hashMessage = ethers.hashMessage(AUTH_MSG);
         if (!(await verifyArgent(walletAddress, signedMessage, hashMessage))) {
             return res.status(400).json({
                 log: `Signature doesn't match with Wallet Address`,

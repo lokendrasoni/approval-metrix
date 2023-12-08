@@ -9,5 +9,14 @@ export type ContributorContextTypes = {
     provider: IProvider;
     handleLogin: any;
     logout: any;
+    authData: any;
     loadingSign: Boolean;
+    authSuccess: Boolean;
+    authError: any;
+    authFetching: Boolean;
+    authLoading: Boolean;
+    fetchingLogin: Boolean;
+    loginLoading: Boolean;
+    wallet: string;
+    connectedChain: string;
 };

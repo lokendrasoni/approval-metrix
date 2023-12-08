@@ -1,6 +1,5 @@
 import { IProvider, WALLET_ADAPTERS } from "@web3auth/base";
 import { Web3Auth } from "@web3auth/modal";
-import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { createContext, useCallback, useEffect, useState } from "react";
 import { initWeb3auth } from "src/helpers/onboard/initWeb3Auth";
@@ -49,9 +48,6 @@ export function ContributorContextProvider({ children }) {
                         },
                     },
                 });
-                if (initWeb3auth.provider) {
-                    setProvider(initWeb3auth.provider);
-                }
             } catch (err) {
                 console.error("Error while initiating web3auth", err.message);
             }
@@ -61,8 +57,10 @@ export function ContributorContextProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        if ((provider && router.pathname === "/contributor") || isLoggedIn) {
+        if ((provider || isLoggedIn) && router.pathname === "/contributor") {
             router.replace("/contributor/home");
+        } else if (!provider && !isLoggedIn && router.pathname !== "/contributor") {
+            router.replace("/contributor");
         }
     }, [provider, router, isLoggedIn]);
 
@@ -74,6 +72,8 @@ export function ContributorContextProvider({ children }) {
         const rpc = new RPC(provider);
         const chainId = await rpc.getChainId();
         const address = await rpc.getAccounts();
+
+        console.log(address, chainId);
         setConnectedChain(chainId);
         setWallet(address);
     }, [provider]);
@@ -81,14 +81,6 @@ export function ContributorContextProvider({ children }) {
     useEffect(() => {
         getUserInfo();
     }, [getUserInfo]);
-
-    // call again when signed message changes
-    useEffect(() => {
-        if (signedMessage && callLogin) {
-            refetchLogin();
-            setCallLogin(false);
-        }
-    }, [signedMessage, callLogin]);
 
     const { refetch: clearCookie } = useLogoutapi({
         enabled: false,
@@ -104,18 +96,16 @@ export function ContributorContextProvider({ children }) {
         isFetching: authFetching,
         isLoading: authLoading,
     } = useCheckAuth({
-        enabled: Boolean(wallet && provider),
+        enabled: !!wallet && !!provider,
         cacheTime: 0,
         retry: false,
         refetchOnMount: false,
         retryOnMount: false,
         onSuccess: data => {
             // router.push("/");
-            if (wallet && connectedChain?.id) {
-                let loggedInWalletAddress = data?.walletAddress
-                    ? ethers.getAddress(data?.walletAddress)
-                    : "";
-                let selectedWalletAddress = ethers.getAddress(wallet);
+            if (wallet && connectedChain) {
+                let loggedInWalletAddress = data?.walletAddress ? data?.walletAddress : "";
+                let selectedWalletAddress = wallet;
 
                 let isLoggedIn = data?.success && loggedInWalletAddress === selectedWalletAddress;
 
@@ -123,14 +113,10 @@ export function ContributorContextProvider({ children }) {
 
                 // Check if USER has click on login and is not logged in
                 if (!isLoggedIn) {
-                    if (router.pathname !== "/" && !router.pathname.startsWith("/migration")) {
-                        router.push("/");
-                    }
-
                     if (hasInitLogin) {
                         triggerLogin({
-                            account: ethers.getAddress(wallet),
-                            chainIdDecimal: parseInt(connectedChain?.id, 16),
+                            account: wallet,
+                            chainIdDecimal: parseInt(connectedChain, 16),
                             provider,
                             setSignedMessage,
                             setMessage,
@@ -148,11 +134,11 @@ export function ContributorContextProvider({ children }) {
         },
 
         onError: () => {
-            router.push("/");
+            router.push("/contributor");
             setIsLoggedIn(false);
             triggerLogin({
-                account: ethers.getAddress(wallet),
-                chainIdDecimal: parseInt(connectedChain?.id, 16),
+                account: wallet,
+                chainIdDecimal: parseInt(connectedChain, 16),
                 provider,
                 setSignedMessage,
                 setMessage,
@@ -180,8 +166,8 @@ export function ContributorContextProvider({ children }) {
     } = useLoginapi(
         {
             signedMessage,
-            walletAddress: ethers?.getAddress(wallet),
-            networkId: parseInt(connectedChain?.id, 16),
+            walletAddress: wallet,
+            networkId: parseInt(connectedChain, 16),
             isArgentWallet: false,
             isGnosisWallet: false,
             message,
@@ -189,10 +175,17 @@ export function ContributorContextProvider({ children }) {
         },
         {
             enabled:
-                !!signedMessage && wallet && Boolean(parseInt(connectedChain?.id, 16)) && callLogin,
+                !!signedMessage && !!wallet && Boolean(parseInt(connectedChain, 16)) && callLogin,
             onSuccess: onSuccessLogin,
         },
     );
+    // call again when signed message changes
+    useEffect(() => {
+        if (signedMessage && callLogin) {
+            refetchLogin();
+            setCallLogin(false);
+        }
+    }, [signedMessage, callLogin, refetchLogin]);
 
     const handleLogin = async () => {
         if (!web3auth) {
@@ -215,7 +208,23 @@ export function ContributorContextProvider({ children }) {
 
     return (
         <ContributorContext.Provider
-            value={{ web3auth, setWeb3Auth, provider, handleLogin, logout, loadingSign }}
+            value={{
+                web3auth,
+                setWeb3Auth,
+                provider,
+                handleLogin,
+                logout,
+                loadingSign,
+                authData,
+                authSuccess,
+                authError,
+                authFetching,
+                authLoading,
+                fetchingLogin,
+                loginLoading,
+                wallet,
+                connectedChain,
+            }}
         >
             {children}
         </ContributorContext.Provider>

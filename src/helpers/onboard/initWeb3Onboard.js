@@ -40,10 +40,7 @@ export const initWeb3Onboard = init({
     appMetadata: {
         name: "Approval Metrix",
         description: "Approval Metrix",
-        recommendedInjectedWallets: [
-            { name: "MetaMask", url: "https://metamask.io" },
-            { name: "Coinbase", url: "https://wallet.coinbase.com/" },
-        ],
+        recommendedInjectedWallets: [{ name: "MetaMask", url: "https://metamask.io" }],
         explore: "#",
     },
     // i18n: {

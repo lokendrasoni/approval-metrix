@@ -3,9 +3,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 import createEmotionCache from "../styles/createEmotionCache";
 const CssBaseline = dynamic(() => import("@mui/material/CssBaseline"));
-const WalletcontextProvider = dynamic(() =>
-    import("src/contexts/Walletcontext").then(mod => mod.WalletcontextProvider),
-);
+
 const Head = dynamic(() => import("next/head"));
 const NextNProgress = dynamic(() => import("nextjs-progressbar"));
 const CacheProvider = dynamic(() => import("@emotion/react").then(module => module.CacheProvider));
@@ -20,10 +18,9 @@ export const queryClient = new QueryClient({
 export default function AppRoot(props: any) {
     const clientSideEmotionCache = createEmotionCache();
     const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  return (
-    <>
-    
-    <Head>
+    return (
+        <>
+            <Head>
                 <title>Approval Metrix</title>
                 <meta name="description" content="Magically simplify payroll & payments" />
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
@@ -48,14 +45,12 @@ export default function AppRoot(props: any) {
             />
             <CacheProvider value={emotionCache}>
                 <QueryClientProvider client={queryClient}>
-            <WalletcontextProvider>
                     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                     <CssBaseline />
-                                                            
+
                     <Component {...pageProps} />
-            </WalletcontextProvider>
-            </QueryClientProvider>
+                </QueryClientProvider>
             </CacheProvider>
-    </>
-  )
+        </>
+    );
 }

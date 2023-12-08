@@ -4,7 +4,6 @@ import _ from "lodash";
 import { getTokenContractAddress } from "mapping/tokenAddress";
 import moment from "moment";
 import { NextRouter } from "next/router";
-import { isTokenLogoBroken } from "src/queries/tokens/api";
 import {
     bigNumberToString,
     bigNumberfromWei,
@@ -234,119 +233,6 @@ export const getIsUnderTimeLock = payoutDay => {
         moment(moment().format("YYYY-MM-DD")).isSameOrAfter(currentMonthStartDate) &&
         moment(moment().format("YYYY-MM-DD")).isSameOrBefore(PayoutDayDate, "day")
     );
-};
-
-export const getInvoiceTotalAndTokenInfoByTokenAddress = async (
-    invoice,
-    conversionByTokenAddress,
-    tokenSpendingLimit = null,
-    req = null,
-) => {
-    try {
-        const sumTokenByTokenAddress = {};
-        const tokenInfo = {};
-        let filteredItems = invoice?.lineItems || [];
-
-        filteredItems =
-            invoice?.invoiceStatus != "rejected"
-                ? invoice?.lineItems?.filter(({ status }) => status == "active")
-                : filteredItems;
-
-        const uniqueLineItemsByTokenAddress = _.uniqBy(filteredItems, "tokenAddress");
-
-        uniqueLineItemsByTokenAddress.forEach(({ tokenAddress, ...otherProps }: any) => {
-            tokenInfo[tokenAddress] = {
-                ...otherProps,
-                tokenAddress,
-            };
-        });
-
-        for (let {
-            tokenAddress,
-            amount,
-            approvals,
-            fiatConversion,
-            fiatAmount,
-            isAmountInFiat,
-            decimals,
-            tokenSymbol,
-            tokenName,
-            tokenLogoUrl,
-            payoutNonce,
-        } of filteredItems || []) {
-            const noOfapprovals = (approvals || [])?.length;
-            const lockedFiatConversion = fiatConversion;
-            const CurrentfiatConversion = conversionByTokenAddress[tokenAddress] || 0;
-            // for invoices which are rejected and had an approval, then it will have a locked fiat conversion but no approvals since we delete approvals on rejection
-            const fiatConversionCalc =
-                noOfapprovals > 0 && fiatConversion && Number(fiatConversion) >= 0
-                    ? Number(lockedFiatConversion)
-                    : CurrentfiatConversion;
-            const tokenValue =
-                Number(fiatConversionCalc) > 0 && Number(fiatAmount) > 0 && isAmountInFiat
-                    ? new Decimal(fiatAmount).div(new Decimal(fiatConversionCalc))?.toString()
-                    : "0";
-
-            let maxDecimal = calculateMaxDecimalPlaces(tokenValue, 6);
-            if (maxDecimal > decimals) {
-                maxDecimal = decimals;
-            }
-
-            const tokenValueInWei = isAmountInFiat
-                ? stringNumberToWei(roundOff(tokenValue, maxDecimal), decimals)
-                : amount;
-
-            const amountCalc =
-                amount && Number(amount) > 0 && noOfapprovals > 0 ? amount : tokenValueInWei;
-
-            const tokenValueInString = weiToString(tokenValueInWei, decimals);
-
-            // console.log("tokenValueInString", tokenValueInString);
-            const fiatAmountCalc = isAmountInFiat
-                ? fiatAmount
-                : new Decimal(tokenValueInString).mul(fiatConversionCalc)?.toString();
-
-            // console.log("fiatAmountCalc", fiatAmountCalc);
-
-            if (sumTokenByTokenAddress[tokenAddress]) {
-                sumTokenByTokenAddress[tokenAddress] = {
-                    ...sumTokenByTokenAddress[tokenAddress],
-                    totalAmount: bigNumberToString(
-                        bigNumberfromWei(sumTokenByTokenAddress[tokenAddress]?.totalAmount).add(
-                            bigNumberfromWei(amountCalc),
-                        ),
-                    ),
-                    fiatAmount: new Decimal(sumTokenByTokenAddress[tokenAddress]?.fiatAmount)
-                        .plus(fiatAmountCalc)
-                        ?.toString(),
-                };
-            } else {
-                sumTokenByTokenAddress[tokenAddress] = {
-                    totalAmount: amountCalc,
-                    tokenAddress: tokenAddress,
-                    tokenSymbol,
-                    tokenName,
-                    tokenLogoUrl,
-                    fiatAmount: fiatAmountCalc,
-                    isAmountInFiat,
-                    fiatConversion: fiatConversionCalc,
-                    decimals,
-                    notDiscovered: Number(fiatConversionCalc) <= 0 ? true : false,
-                    brokenLogo: await isTokenLogoBroken(
-                        tokenAddress,
-                        tokenLogoUrl,
-                        tokenSpendingLimit,
-                        req,
-                    ),
-                    payoutNonce,
-                };
-            }
-        }
-
-        return sumTokenByTokenAddress;
-    } catch (e) {
-        console.log({ e });
-    }
 };
 
 export const getActiveApprovalsOfInvoiceFromLineItems = invoice => {

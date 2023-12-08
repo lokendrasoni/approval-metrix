@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { createContext, useEffect, useState } from "react";
 import useLoginV3 from "src/hooks/useLogin";
 import { useCheckAuth } from "src/queries/auth/api";
+import { EthersAdapter } from "@safe-global/protocol-kit";
 
 import { useConnectWallet, useSetChain, useWallets } from "@web3-onboard/react";
 import { useRouter } from "next/router";
@@ -11,6 +12,7 @@ import { initWeb3Onboard } from "src/helpers/onboard/initWeb3Onboard";
 import useLocalStorage from "src/hooks/useLocalStorage";
 import { useLoginV3api, useLogoutV3api } from "src/queries/onboard/api";
 import { checkAccountAddress } from "utils/authentication";
+import { EthAdapter } from "@safe-global/safe-core-sdk-types";
 const WalletContext = createContext({});
 
 // Wallet and Auth Context
@@ -44,6 +46,7 @@ export function WalletcontextProvider({ children }) {
     const [redirectedToActivateOrganisation, setRedirectedToActivateOrganisation] = useState(false);
 
     const { loadingSign, triggerLogin } = useLoginV3();
+    const [ethAdapter, setEthAdapter] = useState<EthAdapter>(null);
 
     // call again when signed message changes
     useEffect(() => {
@@ -127,7 +130,6 @@ export function WalletcontextProvider({ children }) {
         },
     });
 
-    
     const onSuccessLogin = async data => {
         if (data?.hasOwnProperty("success")) {
             if (data.success) {
@@ -141,7 +143,6 @@ export function WalletcontextProvider({ children }) {
         }
     };
 
-    
     const {
         refetch: refetchLogin,
         isFetching: fetchingLogin,
@@ -292,6 +293,19 @@ export function WalletcontextProvider({ children }) {
         }
     }, [router.pathname]);
 
+    useEffect(() => {
+        if (!wallet?.provider) {
+            setProvider(null);
+        } else {
+            const webProvider = new ethers.providers.Web3Provider(wallet.provider, "any");
+            setProvider(webProvider);
+            const ethersAdapter = new EthersAdapter({
+                ethers: ethers,
+                signerOrProvider: webProvider.getSigner(0),
+            });
+            setEthAdapter(ethersAdapter);
+        }
+    }, [wallet]);
     return (
         <WalletContext.Provider
             value={{
@@ -341,6 +355,7 @@ export function WalletcontextProvider({ children }) {
                 setRedirectedToManagePayrollPolicy,
                 redirectedToActivateOrganisation,
                 setRedirectedToActivateOrganisation,
+                ethAdapter,
             }}
         >
             {children}

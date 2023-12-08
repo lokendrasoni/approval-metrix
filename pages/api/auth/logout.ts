@@ -1,6 +1,7 @@
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 interface NextResponse extends NextApiResponse {
+    // eslint-disable-next-line unused-imports/no-unused-vars
     cookie(name: string, value: string, options?: cookie.CookieSerializeOptions): void;
 }
 

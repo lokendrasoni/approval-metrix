@@ -7,21 +7,6 @@ import {
     LAST_LOGGEDIN_WALLET_NAME,
     WALLETCONNECT,
 } from "src/constants/localStorage";
-import { ISafeSchema } from "./types/SafeModel";
-import { IWalletWithMetaSchema } from "./types/WalletModel";
-
-export const getRoles = (walletAddress: string, safe: ISafeSchema) => {
-    let roles = [];
-    if (
-        safe?.operators?.find(
-            (operator: IWalletWithMetaSchema) => operator?.wallet?.address == walletAddress,
-        )
-    ) {
-        roles.push("operator");
-    }
-
-    return roles;
-};
 
 export const clearLocalStorage = (clearConnectedWallets = true) => {
     if (clearConnectedWallets) {

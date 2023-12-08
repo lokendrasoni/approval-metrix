@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { generateNonce, SiweMessage } from "siwe";
 import { authenticate } from "src/helpers/auth/authenticate";
-const useLoginV3 = () => {
+const useLogin = () => {
     const [loadingSign, setLoadingSign] = useState(false);
 
     const handleAuth = async ({
@@ -10,7 +10,6 @@ const useLoginV3 = () => {
         provider,
         setSignedMessage,
         setMessage,
-        connector,
         disconnect,
         setCallLogin,
         callLogin,
@@ -31,16 +30,16 @@ const useLoginV3 = () => {
             return siwemessage.prepareMessage();
         };
 
-        const data = await authenticate(account, provider, connector, generateMessage());
+        const data = await authenticate(account, provider, generateMessage());
 
         if (!!data) {
-            setSignedMessage(data?.signature);
+            setSignedMessage(data);
             if (!callLogin) {
                 setCallLogin(true);
             }
         } else {
             if (account) {
-                await disconnect(connector);
+                await disconnect();
             }
         }
         setLoadingSign(false);
@@ -52,7 +51,6 @@ const useLoginV3 = () => {
         provider,
         setSignedMessage,
         setMessage,
-        connector,
         disconnect,
         setCallLogin,
         callLogin,
@@ -63,7 +61,6 @@ const useLoginV3 = () => {
             provider,
             setSignedMessage,
             setMessage,
-            connector,
             disconnect,
             setCallLogin,
             callLogin,
@@ -77,4 +74,4 @@ const useLoginV3 = () => {
     };
 };
 
-export default useLoginV3;
+export default useLogin;

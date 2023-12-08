@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { EthersAdapter } from "@safe-global/protocol-kit";
 import { ethers } from "ethers";
 import { createContext, useEffect, useState } from "react";
 import useLoginV3 from "src/hooks/useLogin";
@@ -11,7 +10,7 @@ import { useRouter } from "next/router";
 import { LAST_LOGGEDIN_NETWORK, LAST_LOGGEDIN_WALLET } from "src/constants/localStorage";
 import { initWeb3Onboard } from "src/helpers/onboard/initWeb3Onboard";
 import useLocalStorage from "src/hooks/useLocalStorage";
-import { useLoginV3api, useLogoutV3api } from "src/queries/onboard/api";
+import { useLoginapi, useLogoutapi } from "src/queries/onboard/api";
 import { checkAccountAddress } from "utils/authentication";
 const WalletContext = createContext({});
 
@@ -23,7 +22,7 @@ export function WalletcontextProvider({ children }) {
     const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
     const [{ connectedChain, settingChain }, setChain] = useSetChain();
     const connectedWallets = useWallets();
-    const [provider, setProvider] = useState(null);
+    const [provider] = useState(null);
     const [isHardwareWallet, setIsHardwareWallet] = useState(false);
     const [isGnosisWallet, setIsGnosisWallet] = useState(false);
     const [, setWeb3Onboard] = useState<any>(null);
@@ -46,7 +45,7 @@ export function WalletcontextProvider({ children }) {
     const [redirectedToActivateOrganisation, setRedirectedToActivateOrganisation] = useState(false);
 
     const { loadingSign, triggerLogin } = useLoginV3();
-    const [ethAdapter, setEthAdapter] = useState<EthAdapter>(null);
+    const [ethAdapter] = useState<EthAdapter>(null);
 
     // call again when signed message changes
     useEffect(() => {
@@ -55,7 +54,7 @@ export function WalletcontextProvider({ children }) {
             setCallLogin(false);
         }
     }, [signedMessage, callLogin]);
-    const { refetch: clearCookieV3 } = useLogoutV3api({
+    const { refetch: clearCookieV3 } = useLogoutapi({
         enabled: false,
         onSuccess: () => {
             setIsLoggedIn(false);
@@ -78,9 +77,9 @@ export function WalletcontextProvider({ children }) {
             // router.push("/");
             if (checkAccountAddress(wallet) && connectedChain?.id) {
                 let loggedInWalletAddress = data?.walletAddress
-                    ? ethers.utils.getAddress(data?.walletAddress)
+                    ? ethers.getAddress(data?.walletAddress)
                     : "";
-                let selectedWalletAddress = ethers.utils.getAddress(wallet?.accounts[0]?.address);
+                let selectedWalletAddress = ethers.getAddress(wallet?.accounts[0]?.address);
 
                 let isLoggedIn = data?.success && loggedInWalletAddress === selectedWalletAddress;
 
@@ -94,7 +93,7 @@ export function WalletcontextProvider({ children }) {
 
                     if (hasInitLogin) {
                         triggerLogin({
-                            account: ethers.utils.getAddress(wallet?.accounts[0]?.address),
+                            account: ethers.getAddress(wallet?.accounts[0]?.address),
                             chainIdDecimal: parseInt(connectedChain?.id, 16),
                             provider,
                             setSignedMessage,
@@ -117,7 +116,7 @@ export function WalletcontextProvider({ children }) {
             router.push("/");
             setIsLoggedIn(false);
             triggerLogin({
-                account: ethers.utils.getAddress(wallet?.accounts[0]?.address),
+                account: ethers.getAddress(wallet?.accounts[0]?.address),
                 chainIdDecimal: parseInt(connectedChain?.id, 16),
                 provider,
                 setSignedMessage,
@@ -144,11 +143,11 @@ export function WalletcontextProvider({ children }) {
         refetch: refetchLogin,
         isFetching: fetchingLogin,
         isLoading: loginLoading,
-    } = useLoginV3api(
+    } = useLoginapi(
         {
             signedMessage,
             walletAddress: checkAccountAddress(wallet)
-                ? ethers?.utils?.getAddress(wallet?.accounts[0]?.address)
+                ? ethers?.getAddress(wallet?.accounts[0]?.address)
                 : "",
             networkId: parseInt(connectedChain?.id, 16),
             isArgentWallet,
@@ -249,15 +248,6 @@ export function WalletcontextProvider({ children }) {
     }, [connectedWallets, wallet]);
     // Check for Magic Wallet user session
 
-    useEffect(() => {
-        if (!wallet?.provider) {
-            setProvider(null);
-        } else {
-            const webProvider = new ethers.providers.Web3Provider(wallet.provider, "any");
-            setProvider(webProvider);
-        }
-    }, [wallet]);
-
     // useEffect(() => {
     //     const localStoragePreviousConnected: any = window.localStorage.getItem("connectedWallets");
     //     const previouslyConnectedWallets: any = JSON.parse(localStoragePreviousConnected);
@@ -289,20 +279,6 @@ export function WalletcontextProvider({ children }) {
             setContinueLoading(false);
         }
     }, [router.pathname]);
-
-    useEffect(() => {
-        if (!wallet?.provider) {
-            setProvider(null);
-        } else {
-            const webProvider = new ethers.providers.Web3Provider(wallet.provider, "any");
-            setProvider(webProvider);
-            const ethersAdapter = new EthersAdapter({
-                ethers: ethers,
-                signerOrProvider: webProvider.getSigner(0),
-            });
-            setEthAdapter(ethersAdapter);
-        }
-    }, [wallet]);
     return (
         <WalletContext.Provider
             value={{
@@ -313,7 +289,7 @@ export function WalletcontextProvider({ children }) {
                     wallet && connectedChain?.id ? parseInt(connectedChain?.id, 16) : null,
                 chainId: wallet ? connectedChain?.id : null,
                 account: checkAccountAddress(wallet)
-                    ? ethers.utils.getAddress(wallet?.accounts[0]?.address)
+                    ? ethers.getAddress(wallet?.accounts[0]?.address)
                     : "",
                 setChain,
                 balance: wallet?.accounts[0]?.balance,

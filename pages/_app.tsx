@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 
+import { ContributorContextProvider } from "src/contexts/ContributorContext";
 import createEmotionCache from "../styles/createEmotionCache";
 const CssBaseline = dynamic(() => import("@mui/material/CssBaseline"));
 const WalletcontextProvider = dynamic(() =>
@@ -20,10 +21,9 @@ export const queryClient = new QueryClient({
 export default function AppRoot(props: any) {
     const clientSideEmotionCache = createEmotionCache();
     const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  return (
-    <>
-    
-    <Head>
+    return (
+        <>
+            <Head>
                 <title>Approval Metrix</title>
                 <meta name="description" content="Magically simplify payroll & payments" />
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
@@ -48,14 +48,16 @@ export default function AppRoot(props: any) {
             />
             <CacheProvider value={emotionCache}>
                 <QueryClientProvider client={queryClient}>
-            <WalletcontextProvider>
-                    {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-                    <CssBaseline />
-                                                            
-                    <Component {...pageProps} />
-            </WalletcontextProvider>
-            </QueryClientProvider>
+                    <WalletcontextProvider>
+                        <ContributorContextProvider>
+                            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                            <CssBaseline />
+
+                            <Component {...pageProps} />
+                        </ContributorContextProvider>
+                    </WalletcontextProvider>
+                </QueryClientProvider>
             </CacheProvider>
-    </>
-  )
+        </>
+    );
 }

@@ -9,14 +9,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             process.env.GOOGLE_REDIRECT_URL,
         );
 
-        const authUrl = oauth2Client.generateAuthUrl({
-            access_type: "offline",
-            scope: ["https://www.googleapis.com/auth/contacts.readonly"],
-        });
+        const authCode = JSON.parse(req.body).authCode;
+        if (authCode) {
+            const { tokens } = await oauth2Client.getToken(authCode);
+            oauth2Client.setCredentials(tokens);
 
-        res.send({
-            url: authUrl,
-        });
+            const people = google.people({ version: "v1", auth: oauth2Client });
+            const { data } = await people.people.connections.list({
+                resourceName: "people/me",
+                personFields: "names,emailAddresses",
+            });
+
+            res.send({ status: "success", data: data });
+        } else {
+            res.send({ status: "failed" });
+        }
     } catch (error) {
         console.error("Error fetching Google Users:", error.message);
         return {

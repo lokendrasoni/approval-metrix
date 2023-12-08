@@ -4,8 +4,10 @@ import { Box } from "@mui/system";
 export const FlexContainer: any = styled("div")`
     display: flex;
     width: 376px;
-    height: ${(props: any) => (props?.showContinue ? "163px" : "auto")};
-    gap: 48px;
+    height: 50px;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
 `;
 
 export const SlideBox: any = styled(Box)`

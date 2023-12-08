@@ -18,8 +18,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const { data } = await people.people.connections.list({
                 resourceName: "people/me",
                 personFields: "names,emailAddresses",
+                sortOrder: "FIRST_NAME_ASCENDING",
             });
-
             res.send({ status: "success", data: data });
         } else {
             res.send({ status: "failed" });

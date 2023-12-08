@@ -11,7 +11,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const authUrl = oauth2Client.generateAuthUrl({
             access_type: "offline",
-            scope: ["https://www.googleapis.com/auth/contacts.readonly"],
+            scope: [
+                "https://www.googleapis.com/auth/contacts",
+                "https://www.googleapis.com/auth/profile.emails.read",
+            ],
         });
 
         res.send({

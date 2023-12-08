@@ -26,7 +26,8 @@ const GoogleContacts = () => {
     };
     const peopleData = await fetch('api/google_auth_success', options).then(obj => obj.json());
     if (peopleData.status === 'success') {
-      setContacts(peopleData.data?.connections);
+      const peopleWithEmail = peopleData.data?.connections.filter((person) => person.emailAddresses && person.emailAddresses[0]);
+      setContacts(peopleWithEmail);
     }
   }
 

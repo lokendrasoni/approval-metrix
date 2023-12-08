@@ -1,27 +1,22 @@
 import { Button, List, ListItem, ListItemText } from "@mui/material";
-import { google } from "googleapis";
 import { useState } from "react";
 
 const GoogleAuth = () => {
   const [userList, setUserList] = useState({});
+  // const clientID = "470709605040-evl095kp0mc67bqccblktf54fppbmccj.apps.googleusercontent.com";
+  // const clientSecret = "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";
+  // const redirect_uri = 'https://localhost:3000';
+  // const scopes = ['https://www.googleapis.com/auth/admin.directory.user.readonly'];
 
   const fetchUsersFromGoogle = async () => {
     try {
-      const auth = new google.auth.GoogleAuth({
-        keyFile: "./google_auth.json",
-        scopes: ["https://www.googleapis.com/auth/admin.directory.user.readonly"],
-      });
-      const admin = google.admin({ version: "directory_v1", auth });
-
-      const { data } = await admin.users.list({
-        customer: "my_customer", // You can replace 'my_customer' with your actual customer ID
-        maxResults: 10, // Adjust the number of results as needed
-      });
+      const response = await fetch('api/google_auth_function');
+      const data = await response.json();
       console.log(data);
     } catch (error) {
-      console.error(`Error Fetching Users from Google: ${error.message}`);
+      console.error('Error fetching users:', error.message);
     }
-  };
+  }
 
   return (
     <>

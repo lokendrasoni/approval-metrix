@@ -13,7 +13,7 @@ import TokenInput from "src/components/TokenInput";
 import TokenLogo from "src/components/TokenLogo";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
-import { stringNumberToWei } from "src/helpers/utils/bignumberUtils";
+import { stringNumberToWei, weiToString } from "src/helpers/utils/bignumberUtils";
 import { minifyAddress } from "src/helpers/utils/web3Utils";
 import { useGetSafeContributors } from "src/queries/safes/api";
 
@@ -160,7 +160,11 @@ export default function QuickSend() {
                                                 }}
                                             />
                                             <Typography>
-                                                {payment?.amount} {payment?.token?.symbol}
+                                                {weiToString(
+                                                    payment?.amount,
+                                                    payment?.token?.decimals,
+                                                )}{" "}
+                                                {payment?.token?.symbol}
                                             </Typography>
                                         </Box>
                                     );

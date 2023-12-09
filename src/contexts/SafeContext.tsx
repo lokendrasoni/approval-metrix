@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import useLocalStorage from "src/hooks/useLocalStorage";
-import { SafeContextTypes } from "./types/SafeContextTyes";
-import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
 import { WHITELISTED_TOKENS } from "src/queries/constants";
+import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
+import { SafeContextTypes } from "./types/SafeContextTyes";
 
 const SafeContext = createContext<SafeContextTypes | {}>({});
 

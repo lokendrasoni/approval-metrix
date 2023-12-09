@@ -10,7 +10,7 @@ export default function Sidebar() {
   const navigation = [
     { key: "dashboard", title: "Dashboard", icon: Home, link: "/dao/dashboard" },
     { key: "quicksend", title: "Quick Send", icon: RocketLaunch, link: "/dao/quick-send" },
-    { key: "contacts", title: "Contacts", icon: People, link: "/dao/contacts" },
+    { key: "contacts", title: "Contributors", icon: People, link: "/dao/contributors" },
   ]
 
 

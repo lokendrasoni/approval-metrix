@@ -3,15 +3,16 @@ import { Container } from "@mui/material";
 
 export const StyledContainer: any = styled(Container)`
     display: flex;
-    width: 100vw;
     margin-left: 0;
     margin-right: 0;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    max-width: unset !important;
+    width: 100%;
 `;
 
 export const SidebarDiv: any = styled.div`
-    width: 250px;
+    width: 20vw;
     height: 100vh;
     background-color: #1976d2;
     color: #fff;
@@ -21,5 +22,5 @@ export const SidebarDiv: any = styled.div`
 export const MainContent: any = styled.div`
     margin-left: 20px;
     padding: 20px;
-    width: 70vw;
+    width: 100%;
 `;

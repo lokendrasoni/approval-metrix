@@ -1,42 +1,65 @@
-import { Button, List, ListItem, ListItemText } from "@mui/material";
-import { useState } from "react";
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-const GoogleAuth = () => {
-  const [userList, setUserList] = useState({});
-  // const clientID = "470709605040-evl095kp0mc67bqccblktf54fppbmccj.apps.googleusercontent.com";
-  // const clientSecret = "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";
-  // const redirect_uri = 'https://localhost:3000';
-  // const scopes = ['https://www.googleapis.com/auth/admin.directory.user.readonly'];
+const GoogleContacts = () => {
+  const router = useRouter();
+  const [contacts, setContacts] = useState([]);
+  const [authUrl, setAuthUrl] = useState(null);
+  const { status, authCode } = router.query;
 
-  const fetchUsersFromGoogle = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('api/google_auth_function');
-      const data = await response.json();
-      console.log(data);
+      const authUrlLocal = await fetch('api/google_auth_function').then(obj => obj.json());
+      setAuthUrl(authUrlLocal.url);
     } catch (error) {
-      console.error('Error fetching users:', error.message);
+      console.error('Error fetching contacts:', error.message);
+    }
+  };
+
+  async function getPeople() {
+    console.log(authCode, status)
+    const options = {
+      method: "POST",
+      body: JSON.stringify({
+        authCode: authCode
+      })
+    };
+    const peopleData = await fetch('api/google_auth_success', options).then(obj => obj.json());
+    if (peopleData.status === 'success') {
+      setContacts(peopleData.data?.connections);
     }
   }
 
+  useEffect(() => {
+    if (status === 'success') {
+      getPeople();
+    }
+  }, [authCode, status])
+
+  useEffect(() => {
+    if (authUrl && router) {
+      router.push(authUrl);
+      setAuthUrl(null);
+    }
+  }, [router, authUrl]);
+
   return (
-    <>
-      <Button onClick={fetchUsersFromGoogle}>Fetch Users from Google</Button>
-      <br />
-      <div>
-        <List>
-          {userList?.length > 0 ? (
-            userList?.map((user: any) => {
-              <ListItem disablePadding>
-                <ListItemText primary={user?.name} />
-              </ListItem>;
-            })
-          ) : (
-            <></>
-          )}
-        </List>
-      </div>
-    </>
+    <div>
+      <h1>Google Contacts</h1>
+      {authUrl === null && contacts.length == 0 &&
+        <button onClick={fetchData}>Fetch Contacts</button>}
+      <ul>
+        {contacts.map((person) => (
+          <li key={person.resourceName}>
+            {person.names && person.names[0] && person.names[0].displayName}
+            {person.emailAddresses && person.emailAddresses[0] && (
+              <span> - {person.emailAddresses[0].value}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
-export default GoogleAuth;
+export default GoogleContacts;

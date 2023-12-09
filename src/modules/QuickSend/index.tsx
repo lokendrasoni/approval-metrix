@@ -13,6 +13,7 @@ import TokenInput from "src/components/TokenInput";
 import TokenLogo from "src/components/TokenLogo";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
+import { stringNumberToWei } from "src/helpers/utils/bignumberUtils";
 import { minifyAddress } from "src/helpers/utils/web3Utils";
 import { useGetSafeContributors } from "src/queries/safes/api";
 
@@ -32,6 +33,10 @@ export default function QuickSend() {
     const [payments, setPayments] = useState([]);
 
     const handleAdd = () => {
+        if (!selectedContributor || !token || !amount) {
+            window.alert("Please fill all the info");
+            return;
+        }
         setPayments(v => {
             v.push({
                 to: data?.contributors?.find(d => d.walletAddress === selectedContributor)
@@ -39,7 +44,7 @@ export default function QuickSend() {
                 name:
                     data?.contributors?.find(d => d.walletAddress === selectedContributor)?.name ||
                     data?.contributors?.find(d => d.walletAddress === selectedContributor)?.email,
-                amount: parseFloat(amount) * Math.pow(10, parseInt(tokensInSafe[token]?.decimals)),
+                amount: stringNumberToWei(amount, tokensInSafe[token]?.decimals),
                 token: tokensInSafe[token],
             });
             return v;
@@ -113,7 +118,11 @@ export default function QuickSend() {
                                     })}
                                 />
                                 <Box display={"flex"} gap={"10px"}>
-                                    <Button variant="contained" onClick={handleAdd}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleAdd}
+                                        disabled={!selectedContributor || !token || !amount}
+                                    >
                                         Add
                                     </Button>
                                     <Button

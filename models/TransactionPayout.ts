@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { ITransactionSchema } from "utils/types/TransactionModel";
+require("./Transaction");
 
 const TransactionPayoutSchema = new mongoose.Schema(
     {

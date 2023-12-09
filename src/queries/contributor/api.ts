@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { CONTRIBUTOR_GET_SAFES, CONTRIBUTOR_GET_SAFES_ENDPOINT } from "../constants";
 import fetchJSON from "../fetchJSON";
-export function useCheckAuth(options = {}) {
+export function useGetContributorSafes(options = {}) {
     return useQuery(
         [CONTRIBUTOR_GET_SAFES],
         async () =>

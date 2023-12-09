@@ -22,6 +22,7 @@ export function ContributorContextProvider({ children }) {
     const [signedMessage, setSignedMessage] = useState<string>("");
     const [message, setMessage] = useState<any>(null);
     const [wallet, setWallet] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
     const [connectedChain, setConnectedChain] = useState<any>("");
 
     useEffect(() => {
@@ -56,13 +57,14 @@ export function ContributorContextProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        if ((provider || isLoggedIn) && router.pathname === "/contributor") {
+        if (provider && isLoggedIn && router.pathname === "/contributor") {
             router.replace("/contributor/home");
         } else if (
             !provider &&
             !isLoggedIn &&
             router.pathname !== "/contributor" &&
-            router.pathname.startsWith("/contributor")) {
+            router.pathname.startsWith("/contributor")
+        ) {
             router.replace("/contributor");
         }
     }, [provider, router, isLoggedIn]);
@@ -75,11 +77,12 @@ export function ContributorContextProvider({ children }) {
         const rpc = new RPC(provider);
         const chainId = await rpc.getChainId();
         const address = await rpc.getAccounts();
+        const userInfo = await web3auth.getUserInfo();
 
-        console.log(address, chainId);
         setConnectedChain(chainId);
         setWallet(address);
-    }, [provider]);
+        setEmail(userInfo.email);
+    }, [provider, web3auth]);
 
     useEffect(() => {
         getUserInfo();
@@ -128,10 +131,6 @@ export function ContributorContextProvider({ children }) {
                             callLogin,
                         });
                     }
-                    // console.log("here", router.pathname);
-                    // if (router.pathname !== "/hello") {
-                    //     router.push("/");
-                    // }
                 }
             }
         },
@@ -169,6 +168,7 @@ export function ContributorContextProvider({ children }) {
     } = useLoginapi(
         {
             signedMessage,
+            email,
             walletAddress: wallet,
             networkId: parseInt(connectedChain, 16),
             isArgentWallet: false,
@@ -178,7 +178,11 @@ export function ContributorContextProvider({ children }) {
         },
         {
             enabled:
-                !!signedMessage && !!wallet && Boolean(parseInt(connectedChain, 16)) && callLogin,
+                !!signedMessage &&
+                !!wallet &&
+                Boolean(parseInt(connectedChain, 16)) &&
+                callLogin &&
+                !!email,
             onSuccess: onSuccessLogin,
         },
     );

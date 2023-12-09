@@ -96,6 +96,7 @@ export default function Contributors() {
           </Grid>
           <Grid item xs={4}>
             <GoogleAuth />
+            <Button variant="contained" onClick={() => setShowAddContactsModal(true)}>Add Contacts</Button>
           </Grid>
         </Grid>
         <hr style={{ marginTop: '0', marginBottom: '20px' }} />

@@ -10,7 +10,7 @@ export const covertTokenAddressToContractLevel = (nativeTokenSymbol, tokenAddres
 };
 
 export const getTokenContractAddress = tokenAddress => {
-    if (!ethers.utils.isAddress(tokenAddress)) {
+    if (!ethers.isAddress(tokenAddress)) {
         return ZERO_ADDRESS;
     } else {
         return tokenAddress;

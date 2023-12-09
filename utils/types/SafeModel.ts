@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { IWalletSchema } from "./WalletModel";
 // Interface to define our Safe model on the frontend
 
 export interface ISafeSchema extends mongoose.Document {
@@ -7,7 +8,7 @@ export interface ISafeSchema extends mongoose.Document {
     safeName: string;
     networkId: number;
     contributors: Array<{
-        wallet: mongoose.Types.ObjectId;
+        wallet: IWalletSchema;
         name: string;
         inviteCode: string;
         status: string;

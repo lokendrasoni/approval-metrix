@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { EthersAdapter } from "@safe-global/protocol-kit";
 import { ethers } from "ethers";
 import { createContext, useEffect, useState } from "react";
 import useLoginV3 from "src/hooks/useLogin";

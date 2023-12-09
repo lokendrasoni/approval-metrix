@@ -12,9 +12,7 @@ const handler = async (req: NextRequest, res: NextApiResponse) => {
         res.status(400).json({ success: false, message: "Only GET requests are allowed!" });
     }
 
-    const wallet = await Wallet.findOne({ address: req?.walletAddress }).populate(
-        "contributedSafes",
-    );
+    let wallet = await Wallet.findOne({ address: req?.walletAddress }).populate("contributedSafes");
 
     if (!wallet) {
         return res.status(403).json({
@@ -23,7 +21,14 @@ const handler = async (req: NextRequest, res: NextApiResponse) => {
         });
     }
 
-    const safes = wallet?.contributedSafes || [];
+    wallet = wallet?.toObject();
+
+    const safes =
+        wallet?.contributedSafes?.map(safe => {
+            delete safe["contributors"];
+            return safe;
+        }) || [];
+    delete wallet["contributedSafes"];
 
     res.status(200).json({
         success: true,

@@ -21,14 +21,14 @@ export const getServerSideProps = async context => {
   if (code) {
     return {
       redirect: {
-        destination: `/google-auth?status=success&authCode=${code}`,
+        destination: `/dao/contributors?status=success&authCode=${code}`,
         permanent: false,
       },
     };
   } else {
     return {
       redirect: {
-        destination: `/google-auth?status=failed`,
+        destination: `/dao/contributors?status=failed`,
         permanent: false,
       },
     };
@@ -36,7 +36,7 @@ export const getServerSideProps = async context => {
   if (error) {
     return {
       redirect: {
-        destination: `/google-auth?status=failed`,
+        destination: `/dao/contributors?status=failed`,
         permanent: false,
       },
     };

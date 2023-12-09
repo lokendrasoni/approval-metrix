@@ -16,6 +16,7 @@ import GoogleAuth from "src/components/GoogleAuth";
 import Sidebar from "src/components/Sidebar";
 import AddContacts from "src/components/addContacts";
 import AddGoogleContacts from "src/components/addGoogleContacts";
+import { theme } from "src/constants/colors";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { SET_SAFE_CONTRIBUTORS_ENDPOINT } from "src/queries/constants";
@@ -137,7 +138,7 @@ export default function Contributors() {
                         <GoogleAuth />
                         <Button
                             variant="contained"
-                            sx={{ marginTop: "10px" }}
+                            sx={{ marginTop: "10px", backgroundColor: theme.grey[900] }}
                             onClick={() => setShowAddContactsModal(true)}
                         >
                             Add Contacts

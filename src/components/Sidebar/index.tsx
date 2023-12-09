@@ -15,7 +15,7 @@ export default function Sidebar() {
 
     return (
         <SidebarDiv>
-            <h2>Menu</h2>
+            <h2>Buildoors!</h2>
             <List>
                 {navigation.map(item => (
                     <ListItem key={item.key} style={{ paddingLeft: 0, paddingRight: 0 }}>

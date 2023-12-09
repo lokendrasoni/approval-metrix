@@ -39,7 +39,7 @@ export default function QuickSend() {
                 name:
                     data?.contributors?.find(d => d.walletAddress === selectedContributor)?.name ||
                     data?.contributors?.find(d => d.walletAddress === selectedContributor)?.email,
-                amount: amount,
+                amount: parseFloat(amount) * Math.pow(10, parseInt(tokensInSafe[token]?.decimals)),
                 token: tokensInSafe[token],
             });
             return v;

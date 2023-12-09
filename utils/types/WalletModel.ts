@@ -3,7 +3,7 @@ export interface IWalletSchema extends mongoose.Document {
     address: string;
     name: string;
     email: string;
-    ens: string;
+    contributedSafes: Array<mongoose.Types.ObjectId>;
     findOneOrCreate: Function;
 }
 

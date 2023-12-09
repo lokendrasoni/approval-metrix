@@ -1,4 +1,4 @@
-import { Home, People, RocketLaunch } from "@mui/icons-material";
+import { People, RocketLaunch } from "@mui/icons-material";
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -8,9 +8,8 @@ export default function Sidebar() {
     const router = useRouter();
     const [active] = useState(router.pathname);
     const navigation = [
-        { key: "dashboard", title: "Dashboard", icon: Home, link: "/dao/dashboard" },
+        { key: "contributors", title: "Contributors", icon: People, link: "/dao/contributors" },
         { key: "quicksend", title: "Quick Send", icon: RocketLaunch, link: "/dao/quick-send" },
-        { key: "contacts", title: "Contributors", icon: People, link: "/dao/contributors" },
     ];
 
     return (

@@ -37,17 +37,23 @@ export default function ContributorHome() {
 
     return (
         <>
-            <Box sx={{ display: "flex", heigth: "100px" }}>
+            <Box sx={{ display: "flex", heigth: "200px", background: "grey" }}>
                 <Box
                     sx={{
                         width: "70%",
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "center",
                         paddingLeft: "400px",
                     }}
                 >
-                    <Typography variant="h3" pl={4} fontWeight={700}>
-                        Auth Provider Demo
+                    <Typography
+                        variant="h3"
+                        pl={4}
+                        fontWeight={700}
+                        sx={{ textDecoration: "white" }}
+                    >
+                        Buildoors...
                     </Typography>
                 </Box>
             </Box>
@@ -58,9 +64,15 @@ export default function ContributorHome() {
                 justifyContent={"flex-end"}
                 alignItems={"center"}
                 marginRight={"20px"}
+                marginTop={"-45px"}
+                color={"white"}
             >
                 Hello ({minifyAddress(wallet, 4, 4)})
-                <Button variant="contained" onClick={logout} sx={{ ml: 2 }}>
+                <Button
+                    variant="outlined"
+                    onClick={logout}
+                    sx={{ ml: 2, color: "white", border: "1px solid white" }}
+                >
                     Log Out
                 </Button>
             </Typography>
@@ -91,6 +103,7 @@ export default function ContributorHome() {
                                     alignContent: "center",
                                     justifyContent: "center",
                                     fontSize: "30px",
+                                    cursor: "pointer",
                                 }}
                             >
                                 Your Safes
@@ -111,7 +124,8 @@ export default function ContributorHome() {
                                             display: "flex",
                                             alignContent: "center",
                                             justifyContent: "center",
-                                            fontSize: "22px",
+                                            fontSize: "20px",
+                                            fontFamily: "monospace",
                                         }}
                                     >
                                         Safe Address:{i?.safeAddress}

@@ -1,0 +1,12 @@
+{
+    "web": {
+        "client_id": "470709605040-evl095kp0mc67bqccblktf54fppbmccj.apps.googleusercontent.com",
+        "project_id": "safeauth-407511",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "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",
+        "javascript_origins": ["https://localhost:3000"],
+        "redirect_uris": ["https://localhost:3000"]
+    }
+}

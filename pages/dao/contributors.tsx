@@ -7,6 +7,7 @@ import Sidebar from "src/components/Sidebar";
 import AddContacts from "src/components/addContacts";
 import AddGoogleContacts from "src/components/addGoogleContacts";
 import SafeContext from "src/contexts/SafeContext";
+import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { SET_SAFE_CONTRIBUTORS_ENDPOINT } from "src/queries/constants";
 import { useGetSafeContributors } from "src/queries/safes/api";
 import { MainContent, StyledContainer } from "./style";
@@ -20,9 +21,9 @@ export default function Contributors() {
     const [showAddContactsModal, setShowAddContactsModal] = useState(false);
     const [fields, setFields] = useState([{ name: "", email: "" }]);
 
-    const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext);
+    const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext) as SafeContextTypes;
 
-    const { data, isSuccess, isLoading, refetch } = useGetSafeContributors({
+    const { data, refetch } = useGetSafeContributors({
         "x-par-safe-address": safeAddress,
         "x-par-network-id": 5,
         "x-par-wallet-address": safeAuthSignInResponse?.eoa,
@@ -60,7 +61,7 @@ export default function Contributors() {
             },
             body: JSON.stringify({ contributors }),
         });
-        return result?.data;
+        return (result as any)?.data;
     }
 
     useEffect(() => {

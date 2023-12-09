@@ -1,6 +1,6 @@
-import { AuthKitSignInData } from "@safe-global/auth-kit";
 import { useRouter } from "next/router";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect } from "react";
+import useLocalStorage from "src/hooks/useLocalStorage";
 import { SafeContextTypes } from "./types/SafeContextTyes";
 import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
 import { WHITELISTED_TOKENS } from "src/queries/constants";
@@ -9,8 +9,13 @@ const SafeContext = createContext<SafeContextTypes | {}>({});
 
 export function SafeContextProvider({ children }) {
     const router = useRouter();
-    const [safeAddress, setSafeAddress] = useState<string>("");
-    const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState<AuthKitSignInData | null>(
+    // const [safeAddress, setSafeAddress] = useState<string>("");
+    const [safeAddress, setSafeAddress] = useLocalStorage("safeAddress", "");
+    // const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState<AuthKitSignInData | null>(
+    //     null,
+    // );
+    const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useLocalStorage(
+        "safeAuthSignInResponse",
         null,
     );
 
@@ -92,6 +97,8 @@ export function SafeContextProvider({ children }) {
     useEffect(() => {
         if (router?.pathname !== "/" && router?.pathname?.startsWith("/dao") && !safeAddress) {
             router.replace("/");
+        } else if (router?.pathname === "/dao/contributor" && safeAddress) {
+            // router.replace("/dao/contributors");
         }
     }, [safeAddress, router]);
 

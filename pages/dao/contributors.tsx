@@ -1,5 +1,5 @@
 import { Close } from '@mui/icons-material';
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
@@ -14,6 +14,8 @@ export default function Contributors() {
   const [googleContacts, setGoogleContacts] = useState([]);
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
+  const [showAddContactsModal, setShowAddContactsModal] = useState(false);
+  const [fields, setFields] = useState([{ name: '', email: '' }]);
 
   const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext);
 
@@ -62,6 +64,23 @@ export default function Contributors() {
   }, [selectedContacts]);
 
   const addContacts = async () => { };
+  const addGoogleContacts = async () => { };
+
+  const handleChange = (idx, event) => {
+    const values = [...fields];
+    if (event.target.name === 'name') {
+      values[idx].name = event.target.value;
+    } else {
+      values[idx].email = event.target.value;
+    }
+    setFields(values);
+  };
+
+  const handleAdd = () => {
+    const values = [...fields];
+    values.push({ name: '', email: '' });
+    setFields(values);
+  };
 
   return (
     <StyledContainer>
@@ -106,6 +125,47 @@ export default function Contributors() {
           </Table>
           : <p>No contributors added yet.</p>
         }
+
+        <Dialog open={showAddContactsModal} onClose={() => setShowAddContactsModal(false)}>
+          <DialogTitle>Add Contacts</DialogTitle>
+          <IconButton onClick={() => setShowAddContactsModal(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <Close />
+          </IconButton>
+          <DialogContent dividers>
+            {fields.map((field, idx) => (
+              <div key={idx}>
+                <TextField
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  sx={{ marginBottom: '20px' }}
+                  value={field.name}
+                  onChange={e => handleChange(idx, e)}
+                />
+                <TextField
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  sx={{ marginBottom: '20px' }}
+                  value={field.email}
+                  onChange={e => handleChange(idx, e)}
+                />
+              </div>
+            ))}
+            <Button onClick={handleAdd}>Add Field</Button>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowAddContactsModal(false)}>Cancel</Button>
+            <Button onClick={addContacts}>Add</Button>
+          </DialogActions>
+        </Dialog>
 
         <Dialog sx={{
           ".MuiPaper-root": {
@@ -160,10 +220,10 @@ export default function Contributors() {
               padding: '20px'
             }}
           >
-            <Button variant="contained" onClick={addContacts}>Import</Button>
+            <Button variant="contained" onClick={addGoogleContacts}>Import</Button>
           </DialogActions>
         </Dialog>
       </MainContent>
-    </StyledContainer >
+    </StyledContainer>
   );
 }

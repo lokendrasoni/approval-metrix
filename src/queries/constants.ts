@@ -3,7 +3,7 @@ export const ME_ENDPOINT = "/api/me";
 export const LOGIN_URL = `/api/auth/login`;
 export const LOGOUT_URL = `/api/auth/logout`;
 export const CONTRIBUTOR_GET_SAFES_ENDPOINT = `/api/contributor/getSafes`;
-export const GET_SAFE_CONTRIBUTORS_ENDPOINT = `/api/getSafeContributors`;
+export const GET_SAFE_CONTRIBUTORS_ENDPOINT = `/api/getSafeContributor`;
 
 //QUERY_NAME
 export const LOGIN = "login";

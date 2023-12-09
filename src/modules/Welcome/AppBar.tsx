@@ -1,5 +1,6 @@
 import { Box, Button, Card, Typography, styled } from "@mui/material";
 import { SafeAuthUserInfo } from "@safe-global/auth-kit";
+import { useRouter } from "next/router";
 
 type AppBarProps = {
     isLoggedIn: boolean;
@@ -27,7 +28,8 @@ const replaceAddresswithMinification = (string, middleChars = 7, endChars = 4) =
 };
 
 const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) => {
-    console.log(eoa, "state");
+    console.log(userInfo.name, "userInfo");
+    const router = useRouter();
     return (
         <>
             {!isLoggedIn && (
@@ -47,7 +49,7 @@ const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) =
                             sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                         >
                             <Typography variant="h4" pl={4} fontWeight={600} textAlign={"center"}>
-                                Hey Guys!
+                                gm folks!
                             </Typography>
                         </Box>
 
@@ -55,10 +57,21 @@ const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) =
                             mr={5}
                             width={"100%"}
                             height={"50%"}
-                            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-around",
+                            }}
                         >
-                            <Button variant="contained" onClick={onLogin} sx={{ width: "50%" }}>
-                                Login
+                            <Button variant="contained" onClick={onLogin} sx={{ width: "40%" }}>
+                                Login as DAO
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{ width: "40%" }}
+                                onClick={() => router.push("/contributor")}
+                            >
+                                Login as Contributor
                             </Button>
                         </Box>
                     </LoginForm>
@@ -95,7 +108,7 @@ const LoginForm = styled(Card)`
     && {
         border: 1px solid grey;
         height: 25rem;
-        width: 30%;
+        width: 50%;
         align-items: center;
         justify-content: center;
         border-radius: 20px;

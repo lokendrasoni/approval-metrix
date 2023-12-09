@@ -9,6 +9,7 @@ export function SafeContext({ children }) {
         <safeContext.Provider
             value={{
                 safeAddress,
+                setSafeAddress,
             }}
         >
             {children}

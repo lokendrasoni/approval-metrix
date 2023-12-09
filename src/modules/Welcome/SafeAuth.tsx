@@ -27,8 +27,10 @@ const SafeAuth = () => {
         setSafeAddress,
         setProvider,
         setEthAdapter,
+        setSafeAuthPack,
+        safeAuthPack,
     } = useContext(SafeContext) as SafeContextTypes;
-    const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
+
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
         !!safeAuthPack?.isAuthenticated,
     );

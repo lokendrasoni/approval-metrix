@@ -7,6 +7,7 @@ import SafeApiKit from "@safe-global/api-kit";
 import { getGnosisBaseURL } from "src/helpers/gnosisUrl";
 import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
 import { SafeContextTypes } from "./types/SafeContextTyes";
+import { SafeAuthPack } from "@safe-global/auth-kit";
 
 const SafeContext = createContext<SafeContextTypes | {}>({});
 
@@ -25,6 +26,7 @@ export function SafeContextProvider({ children }) {
 
     const [provider, setProvider] = useState(null);
     const [ethAdapter, setEthAdapter] = useState<EthersAdapter | null>(null);
+    const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
 
     const [tokensInSafe, setTokensInSafe] = useState({});
     const { data, isSuccess, isError, isLoading } = useGetTokensAndPriceBySafe(
@@ -54,6 +56,16 @@ export function SafeContextProvider({ children }) {
             );
         }
     }, [data, isSuccess, isError, isLoading, safeAddress]);
+
+    useEffect(() => {
+        async function logout() {
+            await safeAuthPack?.signOut();
+            router.push("/");
+        }
+        if (!ethAdapter || (!safeAuthPack && router.pathname?.startsWith("/dao"))) {
+            logout();
+        }
+    }, []);
 
     const resolvingTokensInSafe = (
         data,
@@ -190,6 +202,8 @@ export function SafeContextProvider({ children }) {
                 safeService,
                 safeSdk,
                 setSafeSdk,
+                safeAuthPack,
+                setSafeAuthPack,
             }}
         >
             {children}

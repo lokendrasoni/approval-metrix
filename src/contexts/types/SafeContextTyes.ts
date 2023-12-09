@@ -1,5 +1,5 @@
 import SafeApiKit from "@safe-global/api-kit";
-import { AuthKitSignInData } from "@safe-global/auth-kit";
+import { AuthKitSignInData, SafeAuthPack } from "@safe-global/auth-kit";
 import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
 import { Dispatch, SetStateAction } from "react";
 
@@ -18,4 +18,6 @@ export type SafeContextTypes = {
     safeService: SafeApiKit;
     setSafeService: Function;
     tokensInSafe: any;
+    safeAuthPack: SafeAuthPack;
+    setSafeAuthPack: Function;
 };

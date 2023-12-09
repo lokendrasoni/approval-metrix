@@ -63,7 +63,15 @@ export default function QuickSend() {
             ) : isSuccess && data?.success ? (
                 data?.contributors?.find(c => !!c.walletAddress) ? (
                     <>
-                        <Box display={"flex"} justifyContent={"space-around"} alignItems={"center"}>
+                        <Box
+                            display={"flex"}
+                            sx={{
+                                border: "1px solid #1a202c",
+                                padding: "20px",
+                                width: "max-content",
+                                borderRadius: "10px",
+                            }}
+                        >
                             <Box
                                 display={"flex"}
                                 flexDirection={"column"}

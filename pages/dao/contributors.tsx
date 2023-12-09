@@ -18,7 +18,7 @@ export default function Contributors() {
   const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext);
 
   const rowsData: any = fetch('/api/getSafeContributor', {
-    method: "POST",
+    method: "GET",
     headers: {
       'Content-Type': 'application/json',
       'x-par-safe-address': safeAddress,

@@ -11,13 +11,12 @@ import { getNextNonce } from "src/helpers/gnosis/getNextNonce";
 
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import useERC20Contract from "./useERC20Contract";
+import fetchJSON from "src/queries/fetchJSON";
 function useMultisigTransaction(safeAddress, networkId) {
-    const {
-        safeSdk,
-        safeAddress: currentSafeAddress,
-
-        safeService,
-    } = useContext(SafeContext) as SafeContextTypes;
+    const { safeSdk, safeService, safeAuthSignInResponse } = useContext(
+        SafeContext,
+    ) as SafeContextTypes;
+    const [loading, setLoading] = useState(false);
 
     const { ERC20Contract } = useERC20Contract();
 
@@ -82,6 +81,7 @@ function useMultisigTransaction(safeAddress, networkId) {
         }>;
     }): Promise<{ safeTransaction: SafeTransaction; safeTransactionHash: string }> => {
         try {
+            setLoading(true);
             console.log("safeSdk", safeSdk);
 
             const safeTransactionData: MetaTransactionData[] = payouts?.map(
@@ -92,7 +92,7 @@ function useMultisigTransaction(safeAddress, networkId) {
                     ) {
                         return {
                             to: getAddress(to),
-                            value: inWei ? amount : stringNumberToWei(amount, decimals || 18),
+                            value: amount,
                             data: "0x",
                             operation: 0,
                         };
@@ -109,7 +109,7 @@ function useMultisigTransaction(safeAddress, networkId) {
                             operation: 0,
                             data: erc20.interface.encodeFunctionData("transfer", [
                                 getAddress(to),
-                                inWei ? amount : stringNumberToWei(amount, decimalsCalc),
+                                amount,
                             ]) as string,
                         };
                     }
@@ -120,6 +120,7 @@ function useMultisigTransaction(safeAddress, networkId) {
             // console.log("safeVersion", safeVersion);
 
             const nonce = await getNextNonce(safeAddress, networkId, safeService, safeSdk);
+            console.log("nonce", nonce);
             const options: SafeTransactionOptionalProps = {
                 // safeTxGas //Optional
                 // baseGas, // Optional
@@ -130,6 +131,7 @@ function useMultisigTransaction(safeAddress, networkId) {
                 // Optional
             };
 
+            console.log("safeTransactionData", safeTransactionData);
             const safeTransaction = await safeSdk?.createTransaction({
                 transactions: safeTransactionData,
                 // onlyCalls: safeVersion === "1.1.1",
@@ -140,46 +142,66 @@ function useMultisigTransaction(safeAddress, networkId) {
 
             return { safeTransaction, safeTransactionHash };
         } catch (error) {
+            alert("Something went wrong");
             throw new Error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleAddConfirmation = async (
         safeTransaction: SafeTransaction,
         safeTransactionHash: string,
-        setText = null,
-        sourceModule,
-        count = 0,
     ): Promise<void> => {
         try {
+            setLoading(true);
             const threshold = await safeSdk?.getThreshold();
             // will not execute Transaction By Default
             if (threshold && threshold > 0) {
-                setText ? setText("Please check your wallet to proceed") : null;
                 const safeTransactionSigned: SafeTransaction = await safeSdk?.signTransaction(
                     safeTransaction,
                     "eth_signTypedData_v4",
                 );
-                const signature = safeTransactionSigned.signatures.get(""?.toLowerCase())?.data;
-                setText
-                    ? sourceModule == "expense"
-                        ? setText(`Adding your approval to the batch of ${count} expense(s)`)
-                        : setText("Approving payment...")
-                    : null;
+                const signature = safeTransactionSigned.signatures.get(
+                    safeAuthSignInResponse?.eoa?.toLowerCase(),
+                )?.data;
 
-                await safeService.proposeTransaction({
-                    safeAddress,
-                    safeTransactionData: safeTransaction.data,
-                    safeTxHash: safeTransactionHash,
-                    senderAddress: "",
-                    senderSignature: signature,
-                });
-                await safeService.confirmTransaction(safeTransactionHash, signature);
+                console.log("signature", signature);
+
+                const urlToPostTransaction = `https://safe-transaction-goerli.safe.global/api/v1/safes/${safeAddress}/multisig-transactions/`;
+
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        ...safeTransaction.data,
+                        sender: safeAuthSignInResponse?.eoa,
+                        contractTransactionHash: safeTransactionHash,
+                        signature: signature,
+                    }),
+                };
+
+                await fetchJSON(urlToPostTransaction, options);
+
+                // await safeService.proposeTransaction({
+                //     safeAddress,
+                //     safeTransactionData: safeTransaction.data,
+                //     safeTxHash: safeTransactionHash,
+                //     senderAddress: safeAuthSignInResponse?.eoa,
+                //     senderSignature: signature,
+                // });
+                // await safeService.confirmTransaction(safeTransactionHash, signature);
             } else {
                 throw new Error("Unable to create Transaction");
             }
         } catch (err) {
+            alert("Something went wrong");
+            console.log("error", err);
             throw err;
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -271,6 +293,7 @@ function useMultisigTransaction(safeAddress, networkId) {
         handleAddConfirmation,
         createMultisigTransaction,
         checkOnGnosis,
+        loading,
     };
 }
 

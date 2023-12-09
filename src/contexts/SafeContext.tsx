@@ -154,6 +154,26 @@ export function SafeContextProvider({ children }) {
         }
     }, [safeAddress, ethAdapter, safeSdk]);
 
+    useEffect(() => {
+        const intervalId = setInterval(async () => {
+            try {
+                //assign interval to a variable to clear it.
+                const sdkAddress = await safeSdk?.getAddress();
+                if (safeAddress && (!safeSdk || !sdkAddress || sdkAddress !== safeAddress)) {
+                    if (ethAdapter !== null && safeAddress) {
+                        console.log("reinitialise sdk in interval");
+                        createSafeSDK(ethAdapter, safeAddress);
+                    }
+                } else {
+                    clearInterval(intervalId);
+                }
+            } catch (err) {
+                console.log("catching errorr", err);
+            }
+        }, 2000);
+        return () => clearInterval(intervalId);
+    }, []);
+
     return (
         <SafeContext.Provider
             value={{
@@ -168,6 +188,8 @@ export function SafeContextProvider({ children }) {
                 ethAdapter,
                 setSafeService,
                 safeService,
+                safeSdk,
+                setSafeSdk,
             }}
         >
             {children}

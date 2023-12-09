@@ -15,6 +15,8 @@ import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { minifyAddress } from "src/helpers/utils/web3Utils";
 import { useGetSafeContributors } from "src/queries/safes/api";
+import useMultisigTransaction from "src/hooks/useMultisigTransaction";
+import CustomButton from "src/components/customButton";
 
 export default function QuickSend() {
     const { safeAddress, safeAuthSignInResponse, tokensInSafe } = useContext(
@@ -30,6 +32,32 @@ export default function QuickSend() {
     });
 
     const [payments, setPayments] = useState([]);
+
+    const { loading, handleAddConfirmation, createMultisigTransaction } = useMultisigTransaction(
+        safeAddress,
+        5,
+    );
+
+    const handleSave = async () => {
+        console.log("payments", payments);
+        const payouts = payments?.map(payment => {
+            return {
+                to: payment?.to,
+                tokenAddress: payment?.tokenAddress,
+                amount: payment?.amount,
+                decimals: payment?.token?.decimals,
+                inWei: true,
+            };
+        });
+        const { safeTransaction, safeTransactionHash } = await createMultisigTransaction({
+            payouts,
+        });
+
+        console.log({ safeTransaction, safeTransactionHash });
+        await handleAddConfirmation(safeTransaction, safeTransactionHash);
+        alert(`Transaction created Nonce ${safeTransaction?.data?.nonce}`);
+        setPayments([]);
+    };
 
     const handleAdd = () => {
         setPayments(v => {
@@ -159,7 +187,14 @@ export default function QuickSend() {
 
                                 {payments?.length ? (
                                     <Box display={"flex"} gap={"10px"}>
-                                        <Button variant="contained">Save</Button>
+                                        {loading ? (
+                                            <CircularProgress size={"20px"} />
+                                        ) : (
+                                            <Button variant="contained" onClick={handleSave}>
+                                                Create Transaction
+                                            </Button>
+                                        )}
+
                                         <Button
                                             variant="outlined"
                                             color="secondary"

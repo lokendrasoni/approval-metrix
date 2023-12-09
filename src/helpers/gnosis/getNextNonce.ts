@@ -11,8 +11,13 @@ export const getNextNonce = async (
 ): Promise<number> => {
     const gnosisUrl: string = getGnosisUrlByNetworkId(networkId);
     const currentNonce = await safeSdk?.getNonce();
+    console.log("safeSdk", safeSdk);
+    console.log("currentNonce");
     const lastTrustedPendingTransaction: SafeMultisigTransactionListResponse = await fetchJSON(
         `${gnosisUrl}/safes/${safeAddress}/multisig-transactions?executed=false&trusted=true&limit=1&nonce__gte=${currentNonce}`,
+        {
+            accept: "application/json",
+        },
     );
 
     if (lastTrustedPendingTransaction?.results?.length > 0) {
@@ -20,6 +25,7 @@ export const getNextNonce = async (
         return Number(lastTrustedPendingTransaction.results[0]?.nonce) + 1;
     } else {
         console.log("dueto this");
-        return await safeService?.getNextNonce(safeAddress);
+
+        return await safeSdk?.getNonce();
     }
 };

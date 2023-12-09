@@ -7,16 +7,7 @@ export interface SafeListByChainId {
     };
 }
 
-export const getOwnedSafesByChainId = async (
-    walletAddress: string,
-    withoutCache: boolean = false,
-): Promise<SafeListByChainId> => {
-    let data: any;
-
-    if (data && !withoutCache) {
-        return data;
-    }
-
+export const getOwnedSafesByChainId = async (walletAddress: string): Promise<SafeListByChainId> => {
     const safeObj: SafeListByChainId = {};
 
     const chains = [5];

@@ -43,7 +43,7 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
         if (method != "POST") {
             throw new Error("Only POST requests allowed!");
         }
-        const { contributors, host } = req.body;
+        const { contributors } = req.body;
 
         if (!contributors || contributors?.length == 0) {
             throw new Error("Bad Request Body");
@@ -82,11 +82,12 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
                 });
             }
 
-            const existingContributedSafes = wallet?.contributedSafes || [];
-            const newContributedSafes = [...existingContributedSafes, safe?._id];
-
-            wallet.contributedSafes = newContributedSafes;
-            await wallet.save();
+            await Wallet.findOneAndUpdate(
+                {
+                    _id: wallet?._id,
+                },
+                { $addToSet: { contributedSafes: safe?._id } },
+            );
 
             contributorsToAdd.push({
                 wallet: wallet?._id,
@@ -124,7 +125,16 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
         // safe to wallets
 
         const existingContributors = safe?.contributors || [];
-        safe.contributors = [...existingContributors, ...contributorsToAdd];
+
+        const contributorsToAddCalc = [...existingContributors, ...contributorsToAdd];
+
+        const uniqueContributorsToAdd = contributorsToAddCalc.filter(objToAdd => {
+            return !existingContributors.some(existingObj => {
+                return existingObj.wallet?.toString() == objToAdd.wallet?.toString();
+            });
+        });
+
+        safe.contributors = [...uniqueContributorsToAdd];
         await safe.save();
         return res.status(201).json({ success: true });
     } catch (err) {

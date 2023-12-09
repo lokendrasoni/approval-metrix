@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 
 export const FlexContainer: any = styled("div")`
@@ -27,9 +28,15 @@ export const CenteredFlexBox: any = styled(Box)`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top:10px
+    margin-top: 10px;
 `;
 
 export const HeadingText: any = styled("h1")`
     font-size: 1.3rem;
+`;
+
+export const CustomButton: any = styled(Button)`
+    padding: 8px 16px;
+    display: flex;
+    justify-content: center;
 `;

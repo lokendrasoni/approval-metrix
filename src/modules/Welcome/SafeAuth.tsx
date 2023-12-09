@@ -112,7 +112,7 @@ const SafeAuth = () => {
             }
         };
         safeAuthCheckFunc();
-    }, [isAuthenticated]);
+    }, [isAuthenticated, safeAuthPack]);
 
     const login = async () => {
         const signInInfo = await safeAuthPack?.signIn();

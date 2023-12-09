@@ -9,6 +9,7 @@ import { IWalletSchema } from "utils/types/WalletModel";
 import sendEmail from "utils/sendEmail";
 
 interface NextRequest extends NextApiRequest {
+    safeAddress: string;
     safe: ISafeSchema;
     networkId?: number;
     operatorName?: string;
@@ -42,25 +43,25 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
         if (method != "POST") {
             throw new Error("Only POST requests allowed!");
         }
-        const { safeAddress, networkId, contributors, host } = req.body;
+        const { contributors, host } = req.body;
 
-        if (!networkId || !safeAddress || !contributors || contributors?.length == 0) {
+        if (!contributors || contributors?.length == 0) {
             throw new Error("Bad Request Body");
         }
 
         let safe: ISafeSchema;
 
         const findSafe = await Safe.findOne({
-            safeAddress: safeAddress,
-            networkId: networkId,
+            safeAddress: req?.safeAddress,
+            networkId: req?.networkId,
         });
 
         if (findSafe) {
             safe = findSafe;
         } else {
             safe = await Safe.create({
-                safeAddress: safeAddress,
-                networkId,
+                safeAddress: req?.safeAddress,
+                networkId: req?.networkId,
             });
         }
 
@@ -96,13 +97,13 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
 
             const data = {
                 to: contributor?.email?.trim()?.toLowerCase(),
-                subject: `Safe is inviting you to their payroll 🎉`,
+                subject: `${req?.safeAddress} is inviting you to their contributors 🎉`,
                 template: "invite-hackathon-23",
                 "h:X-Mailgun-Variables": JSON.stringify({
-                    link: `${host}/contributor`,
-                    titleText: `Safe is inviting you to their payroll 🎉`,
+                    link: `${req.headers.host}/contributor`,
+                    titleText: `${req?.safeAddress} is inviting you to their contributors 🎉`,
                     bodyText: initialMessage,
-                    showQuote: true, // Boolean
+                    showQuote: false, // Boolean
                     safeName: safe?.safeAddress,
                     buttonText: "View Invitation",
                 }),
@@ -125,6 +126,7 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
         const existingContributors = safe?.contributors || [];
         safe.contributors = [...existingContributors, ...contributorsToAdd];
         await safe.save();
+        return res.status(201).json({ success: true });
     } catch (err) {
         console.log("Error", err);
         return res.status(500).json({ success: false, errorMessage: err.message });

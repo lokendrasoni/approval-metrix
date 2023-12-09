@@ -13,7 +13,10 @@ async function sendEmail(
         domain: DOMAIN,
     });
 
-    let emailData = { from: "Anubhav from Parcel <no-reply@mail.parcelmoney.in>", ...data };
+    let emailData = {
+        from: "Deepak from Buildoors <no-reply@mail.dsindhwani55@gmail.com>",
+        ...data,
+    };
 
     mg.messages().send(emailData, callback);
 }

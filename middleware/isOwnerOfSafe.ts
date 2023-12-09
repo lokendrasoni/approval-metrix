@@ -1,25 +1,18 @@
 import { getOwnedSafesByChainId } from "src/helpers/cache/safe-service";
 import dbConnect from "utils/dbConnect";
-import { ISafeSchema } from "utils/types/SafeModel";
 
 const isOwnerOfSafe = (handler, withoutCache = false) => {
     return async (req, res) => {
         try {
-            const safe: ISafeSchema = req?.safe;
-            if (!safe) {
-                return res.status(401).json({
-                    success: false,
-                    message: "Invalid Safe",
-                });
-            }
-
             const connection = await dbConnect();
             if (!connection) {
                 throw new Error("db connection failed");
             }
 
-            const walletAddress = req.walletAddress;
-            const networkId = req.networkId;
+            const networkId: number | null = req.headers["x-par-network-id"];
+            const safeAddress: string | null = req.headers["x-par-safe-address"] || null;
+            const walletAddress: string | null = req.headers["x-par-wallet-address"] || null;
+
             const allSafes = await getOwnedSafesByChainId(walletAddress, withoutCache);
             const safes = allSafes?.[networkId.toString()]?.safes || [];
 
@@ -30,12 +23,15 @@ const isOwnerOfSafe = (handler, withoutCache = false) => {
                 });
             }
 
-            if (!safes?.includes(safe?.safeAddress)) {
+            if (!safes?.includes(safeAddress)) {
                 return res.status(401).json({
                     success: false,
                     message: "Connected wallet is not a owner of this safe",
                 });
             }
+            req.safeAddress = safeAddress;
+            req.networkId = networkId;
+            req.walletAddress = walletAddress;
 
             return handler(req, res);
         } catch (error) {

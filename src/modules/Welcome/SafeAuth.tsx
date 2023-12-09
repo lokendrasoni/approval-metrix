@@ -21,9 +21,13 @@ import AppBar from "./AppBar";
 
 const SafeAuth = () => {
     const router = useRouter();
-    const { safeAuthSignInResponse, setSafeAuthSignInResponse, setSafeAddress } = useContext(
-        SafeContext,
-    ) as SafeContextTypes;
+    const {
+        safeAuthSignInResponse,
+        setSafeAuthSignInResponse,
+        setSafeAddress,
+        setProvider,
+        setEthAdapter,
+    } = useContext(SafeContext) as SafeContextTypes;
     const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
         !!safeAuthPack?.isAuthenticated,
@@ -33,7 +37,6 @@ const SafeAuth = () => {
     const [balance, setBalance] = useState<string | undefined>();
     const [consoleMessage, setConsoleMessage] = useState<string>("");
     const [consoleTitle, setConsoleTitle] = useState<string>("");
-    const [provider, setProvider] = useState<BrowserProvider | undefined>();
 
     useEffect(() => {
         const initAuthPack = async () => {
@@ -108,6 +111,13 @@ const SafeAuth = () => {
                     ),
                 );
                 setProvider(provider);
+
+                const ethAdapter = new EthersAdapter({
+                    ethers,
+                    signerOrProvider: signer,
+                });
+
+                setEthAdapter(ethAdapter);
             }
         };
         safeAuthCheckFunc();

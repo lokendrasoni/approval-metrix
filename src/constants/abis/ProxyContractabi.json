@@ -1,0 +1,187 @@
+[
+    {
+        "inputs": [
+            { "internalType": "address", "name": "_logic", "type": "address" },
+            { "internalType": "address", "name": "_addressRegistry", "type": "address" }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "addressRegistry", "type": "address" }],
+        "name": "InvalidAddressRegistryProvided",
+        "type": "error"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "logicAddress", "type": "address" }],
+        "name": "InvalidLogicAddressProvided",
+        "type": "error"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "orgAddress", "type": "address" }],
+        "name": "OrgOnboardedAlready",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            { "internalType": "address", "name": "proxy", "type": "address" },
+            { "internalType": "address", "name": "prediction", "type": "address" }
+        ],
+        "name": "ProxyDoesntMatchPrediction",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "oldLogicAddress",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newLogicAddress",
+                "type": "address"
+            }
+        ],
+        "name": "LogicAddressChanged",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "safeAddress",
+                "type": "address"
+            },
+            { "indexed": true, "internalType": "address", "name": "proxy", "type": "address" },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "implementation",
+                "type": "address"
+            },
+            { "indexed": false, "internalType": "bytes", "name": "initData", "type": "bytes" }
+        ],
+        "name": "OrgOnboarded",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+            },
+            { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+        ],
+        "name": "OwnershipTransferStarted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+            },
+            { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "acceptOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "addressRegistry",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            { "internalType": "bytes32", "name": "salt", "type": "bytes32" },
+            { "internalType": "address[]", "name": "_approvers", "type": "address[]" },
+            { "internalType": "uint128", "name": "approvalsRequired", "type": "uint128" },
+            { "internalType": "address", "name": "safeAddress", "type": "address" }
+        ],
+        "name": "computeAddress",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "logic",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            { "internalType": "bytes32", "name": "salt", "type": "bytes32" },
+            { "internalType": "address[]", "name": "_approvers", "type": "address[]" },
+            { "internalType": "uint128", "name": "approvalsRequired", "type": "uint128" }
+        ],
+        "name": "onboard",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "name": "parcelAddress",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "pendingOwner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "_logic", "type": "address" }],
+        "name": "setNewImplementationAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]

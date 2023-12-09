@@ -242,7 +242,6 @@ const SafeAuth = () => {
         setConsoleMessage(typeof message === "string" ? message : JSON.stringify(message, null, 2));
     };
 
-    console.log(safeAuthSignInResponse, "obj");
     return (
         <>
             <Box sx={{ display: "flex", heigth: "100px" }}>

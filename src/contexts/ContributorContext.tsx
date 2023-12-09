@@ -39,8 +39,7 @@ export function ContributorContextProvider({ children }) {
                                         "url to your custom logo which will shown in dark mode",
                                 },
                                 facebook: {
-                                    // it will hide the facebook option from the Web3Auth modal.
-                                    showOnModal: false,
+                                    name: "facebook login",
                                 },
                             },
                             // setting it to false will hide all social login methods from modal.

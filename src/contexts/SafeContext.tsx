@@ -2,8 +2,12 @@ import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import useLocalStorage from "src/hooks/useLocalStorage";
 import { WHITELISTED_TOKENS } from "src/queries/constants";
+import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
+import SafeApiKit from "@safe-global/api-kit";
+import { getGnosisBaseURL } from "src/helpers/gnosisUrl";
 import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
 import { SafeContextTypes } from "./types/SafeContextTyes";
+import { SafeAuthPack } from "@safe-global/auth-kit";
 
 const SafeContext = createContext<SafeContextTypes | {}>({});
 
@@ -18,6 +22,11 @@ export function SafeContextProvider({ children }) {
         "safeAuthSignInResponse",
         null,
     );
+    const [safeSdk, setSafeSdk] = useState<Safe>(null);
+
+    const [provider, setProvider] = useState(null);
+    const [ethAdapter, setEthAdapter] = useState<EthersAdapter | null>(null);
+    const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
 
     const [tokensInSafe, setTokensInSafe] = useState({});
     const { data, isSuccess, isError, isLoading } = useGetTokensAndPriceBySafe(
@@ -33,6 +42,8 @@ export function SafeContextProvider({ children }) {
         },
     );
 
+    const [safeService, setSafeService] = useState<SafeApiKit | null>(null);
+
     useEffect(() => {
         if (data && isSuccess && Array.isArray(data) && !isLoading && !isError) {
             resolvingTokensInSafe(
@@ -45,6 +56,16 @@ export function SafeContextProvider({ children }) {
             );
         }
     }, [data, isSuccess, isError, isLoading, safeAddress]);
+
+    useEffect(() => {
+        async function logout() {
+            await safeAuthPack?.signOut();
+            router.push("/");
+        }
+        if (!ethAdapter || (!safeAuthPack && router.pathname?.startsWith("/dao"))) {
+            logout();
+        }
+    }, []);
 
     const resolvingTokensInSafe = (
         data,
@@ -102,6 +123,69 @@ export function SafeContextProvider({ children }) {
         }
     }, [safeAddress, router]);
 
+    useEffect(() => {
+        if (safeAddress && ethAdapter) {
+            const safeService = new SafeApiKit({
+                txServiceUrl: getGnosisBaseURL(5),
+                chainId: BigInt(5),
+            });
+            setSafeService(safeService);
+        }
+    }, [safeAddress, ethAdapter]);
+
+    const createSafeSDK = async (ethAdapter, safeAddress) => {
+        if (ethAdapter !== null && safeAddress) {
+            try {
+                const safeSdk: Safe = await Safe.create({
+                    ethAdapter: ethAdapter,
+                    safeAddress,
+                });
+                setSafeSdk(safeSdk);
+            } catch (err) {
+                console.log("catch error in creating sdk");
+                console.error(err);
+            }
+        } else {
+            console.log("catch while before creating sdk");
+            console.log({ ethAdapter, safeAddress });
+        }
+    };
+
+    useEffect(() => {
+        async function reInitialiseSdk() {
+            const sdkAddress = await safeSdk?.getAddress();
+            if (!safeSdk || !sdkAddress || sdkAddress !== safeAddress) {
+                if (ethAdapter !== null && safeAddress) {
+                    console.log("reinitialise sdk");
+                    createSafeSDK(ethAdapter, safeAddress);
+                }
+            }
+        }
+        if (safeAddress) {
+            reInitialiseSdk();
+        }
+    }, [safeAddress, ethAdapter, safeSdk]);
+
+    useEffect(() => {
+        const intervalId = setInterval(async () => {
+            try {
+                //assign interval to a variable to clear it.
+                const sdkAddress = await safeSdk?.getAddress();
+                if (safeAddress && (!safeSdk || !sdkAddress || sdkAddress !== safeAddress)) {
+                    if (ethAdapter !== null && safeAddress) {
+                        console.log("reinitialise sdk in interval");
+                        createSafeSDK(ethAdapter, safeAddress);
+                    }
+                } else {
+                    clearInterval(intervalId);
+                }
+            } catch (err) {
+                console.log("catching errorr", err);
+            }
+        }, 2000);
+        return () => clearInterval(intervalId);
+    }, []);
+
     return (
         <SafeContext.Provider
             value={{
@@ -110,6 +194,16 @@ export function SafeContextProvider({ children }) {
                 safeAuthSignInResponse,
                 setSafeAuthSignInResponse,
                 tokensInSafe,
+                setProvider,
+                provider,
+                setEthAdapter,
+                ethAdapter,
+                setSafeService,
+                safeService,
+                safeSdk,
+                setSafeSdk,
+                safeAuthPack,
+                setSafeAuthPack,
             }}
         >
             {children}

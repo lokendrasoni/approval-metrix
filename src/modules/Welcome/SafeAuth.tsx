@@ -17,20 +17,26 @@ import { useContext, useEffect, useState } from "react";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import AppBar from "./AppBar";
+import { EthersAdapter } from "@safe-global/protocol-kit";
 
 const SafeAuth = () => {
     const router = useRouter();
-    const { safeAuthSignInResponse, setSafeAuthSignInResponse, setSafeAddress } = useContext(
-        SafeContext,
-    ) as SafeContextTypes;
-    const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
+    const {
+        safeAuthSignInResponse,
+        setSafeAuthSignInResponse,
+        setSafeAddress,
+        setProvider,
+        setEthAdapter,
+        setSafeAuthPack,
+        safeAuthPack,
+    } = useContext(SafeContext) as SafeContextTypes;
+
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
         !!safeAuthPack?.isAuthenticated,
     );
     const [userInfo, setUserInfo] = useState<SafeAuthUserInfo | null>(null);
     const [chainId, setChainId] = useState<string | undefined>();
     const [balance, setBalance] = useState<string | undefined>();
-    const [provider, setProvider] = useState<BrowserProvider | undefined>();
 
     useEffect(() => {
         const initAuthPack = async () => {
@@ -105,6 +111,13 @@ const SafeAuth = () => {
                     ),
                 );
                 setProvider(provider);
+
+                const ethAdapter = new EthersAdapter({
+                    ethers,
+                    signerOrProvider: signer,
+                });
+
+                setEthAdapter(ethAdapter);
             }
         };
         safeAuthCheckFunc();

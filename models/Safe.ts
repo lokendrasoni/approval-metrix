@@ -44,16 +44,6 @@ const SafeSchema = new mongoose.Schema(
 
 SafeSchema.index({ safeAddress: 1, networkId: 1 }, { unique: true });
 
-SafeSchema.methods.getContributors = async function () {
-    const safe = await Safe.findById(this._id).populate([
-        {
-            path: "contributors.wallet",
-        },
-    ]);
-    const operators = safe?.operators?.map(({ wallet }) => wallet?.address);
-    return [...operators];
-};
-
 const Safe =
     (mongoose.models.Safe as mongoose.Model<ISafeSchema>) ||
     mongoose.model<ISafeSchema>("Safe", SafeSchema);

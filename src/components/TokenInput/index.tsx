@@ -39,7 +39,7 @@ import UndiscoveredCoin from "assets/Undiscovered-Coin.svg";
 import TokenLogo from "../TokenLogo";
 import { ComponentWrapper, DollarContainer, StyledInputField, StyledSelect } from "./style";
 import { TokenInputProps } from "./types";
-import { renderOptions, renderToken } from "./utils";
+import { renderOptions } from "./utils";
 
 const TokenInput = ({
     label = "Amount",
@@ -49,18 +49,13 @@ const TokenInput = ({
     handleAmountChange,
     token,
     handleTokenChange,
-    fixedUsd,
-    handleChangeFixedUsd,
     componentStyles = {},
     disabled = false,
-    fiatValue,
-    handleFiatValueChange,
     tokensInSafe = {},
     menuLeftMargin = -2,
     menuTopMargin = 2,
     required = true,
     disableTokenChange = false,
-    disabledToggleUsd = false,
     type = "secondary",
     size = "large",
     infoText = "",
@@ -71,7 +66,7 @@ const TokenInput = ({
     isNonFixedUSD = false,
 }: TokenInputProps) => {
     // init state values
-    const [hoverState, setHoverState] = useState(false);
+    const [, setHoverState] = useState(false);
     const [componentActive, setComponentActive] = useState(false);
     const [componentHover, setComponentHover] = useState(false);
     const [selectedToken, setSelectedToken] = useState("USDC");
@@ -120,94 +115,40 @@ const TokenInput = ({
                     onMouseOver={() => setComponentHover(true)}
                     active={componentActive}
                 >
-                    {!isNonFixedUSD ? (
-                        renderToken({
-                            disabled,
-                            fixedUsd,
-                            disabledFixUsd: disabledToggleUsd,
-                            setHoverState,
-                            handleChangeFixedUsd,
-                            hoverState,
-                            index,
-                            type,
-                            componentHover,
-                            componentActive,
-                        })
-                    ) : (
-                        <TokenLogo
-                            imageUrl={tokensInSafe[selectedToken]?.logoUri}
-                            size="16px"
-                            brokenLogo={tokensInSafe[selectedToken]?.brokenLogo}
-                            wrapperStyle={{ " span": { verticalAlign: "baseline" } }}
-                        />
-                    )}
+                    <TokenLogo
+                        imageUrl={tokensInSafe[selectedToken]?.logoUri}
+                        size="16px"
+                        brokenLogo={tokensInSafe[selectedToken]?.brokenLogo}
+                        wrapperStyle={{ " span": { verticalAlign: "baseline" } }}
+                    />
                 </DollarContainer>
                 <div style={{ width: "100%" }}>
-                    {fixedUsd ? (
-                        <StyledInputField
-                            varianttype={type}
-                            size={size}
-                            hover={componentHover}
-                            active={componentActive}
-                            disabled={disabled}
-                            variant="outlined"
-                            placeholder="0.00"
-                            type="number"
-                            inputProps={{
-                                step: "0.1",
-                            }}
-                            value={fiatValue}
-                            required={false}
-                            name="fiatValue"
-                            sx={{ width: "100%" }}
-                            onMouseOver={() => setComponentHover(true)}
-                            onMouseOut={() => setComponentHover(false)}
-                            onFocus={() => setComponentActive(true)}
-                            onBlur={() => setComponentActive(false)}
-                            onChange={e => handleFiatValueChange(e, e.target.value, index)}
-                            InputProps={{
-                                endAdornment: fixedUsd && (
-                                    <Typography
-                                        style={{
-                                            fontWeight: 500,
-                                            fontSize: "14px",
-                                            color: "#8B91A1",
-                                            whiteSpace: "nowrap",
-                                        }}
-                                    >
-                                        USD of
-                                    </Typography>
-                                ),
-                            }}
-                        />
-                    ) : (
-                        <StyledInputField
-                            varianttype={type}
-                            size={size}
-                            hover={componentHover}
-                            active={componentActive}
-                            disabled={disabled}
-                            variant="outlined"
-                            placeholder="0.00"
-                            type="text"
-                            inputProps={{
-                                step: "0.1",
-                            }}
-                            InputProps={{
-                                inputComponent: NumberFormatCustom,
-                            }}
-                            value={amount}
-                            required={false}
-                            name="amount"
-                            sx={{ width: "100%" }}
-                            onMouseOver={() => setComponentHover(true)}
-                            onMouseOut={() => setComponentHover(false)}
-                            onFocus={() => setComponentActive(true)}
-                            onBlur={() => setComponentActive(false)}
-                            onChange={e => handleAmountChageCallback(e)}
-                            autoComplete="off"
-                        />
-                    )}
+                    <StyledInputField
+                        varianttype={type}
+                        size={size}
+                        hover={componentHover}
+                        active={componentActive}
+                        disabled={disabled}
+                        variant="outlined"
+                        placeholder="0.00"
+                        type="text"
+                        inputProps={{
+                            step: "0.1",
+                        }}
+                        InputProps={{
+                            inputComponent: NumberFormatCustom,
+                        }}
+                        value={amount}
+                        required={false}
+                        name="amount"
+                        sx={{ width: "100%" }}
+                        onMouseOver={() => setComponentHover(true)}
+                        onMouseOut={() => setComponentHover(false)}
+                        onFocus={() => setComponentActive(true)}
+                        onBlur={() => setComponentActive(false)}
+                        onChange={e => handleAmountChageCallback(e)}
+                        autoComplete="off"
+                    />
                 </div>
 
                 <div style={{ minWidth: 100 }}>

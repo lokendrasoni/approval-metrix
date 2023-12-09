@@ -1,6 +1,5 @@
-import { Box, MenuItem, Select } from "@mui/material";
+import { Box, MenuItem, Select, Typography } from "@mui/material";
 import { useContext, useState } from "react";
-import TokenInput from "src/components/TokenInput";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { useGetSafeContributors } from "src/queries/safes/api";
@@ -9,6 +8,7 @@ export default function QuickSend() {
     const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext) as SafeContextTypes;
     const [selectedContributor, setSelectedContributor] = useState("");
     const [amount, setAmount] = useState("");
+    const [token, setToken] = useState("gETH");
     const { data, isSuccess } = useGetSafeContributors({
         "x-par-safe-address": safeAddress,
         "x-par-network-id": 5,
@@ -37,12 +37,17 @@ export default function QuickSend() {
                                 amount={amount}
                                 handleAmountChange={(e, v) => setAmount(v)}
                                 tokensInSafe={}
+                                token={token}
+                                handleTokenChange={(e, v) => {
+                                    setToken(v);
+                                }}
+                                options={}
                             /> */}
                         </Box>
                     </Box>
                 </>
             ) : (
-                <>Please add contributors to send payments</>
+                <Typography variant="h6">Please add contributors to send payments</Typography>
             )}
         </>
     );

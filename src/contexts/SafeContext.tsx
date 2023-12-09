@@ -1,18 +1,20 @@
 import { createContext, useState } from "react";
 import { SafeContextTypes } from "./types/SafeContextTyes";
 
-const safeContext = createContext<SafeContextTypes | {}>({});
+const SafeContext = createContext<SafeContextTypes | {}>({});
 
-export function SafeContext({ children }) {
+export function SafeContextProvider({ children }) {
     const [safeAddress, setSafeAddress] = useState<string>("");
     return (
-        <safeContext.Provider
+        <SafeContext.Provider
             value={{
                 safeAddress,
                 setSafeAddress,
             }}
         >
             {children}
-        </safeContext.Provider>
+        </SafeContext.Provider>
     );
 }
+
+export default SafeContext;

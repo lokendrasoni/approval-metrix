@@ -1,7 +1,6 @@
 import { getOwnedSafesByChainId } from "src/helpers/cache/safe-service";
 import dbConnect from "utils/dbConnect";
 import { ISafeSchema } from "utils/types/SafeModel";
-import authenticate from "./authenticate";
 
 const isOwnerOfSafe = (handler, withoutCache = false) => {
     return async (req, res) => {
@@ -48,5 +47,5 @@ const isOwnerOfSafe = (handler, withoutCache = false) => {
         }
     };
 };
-const HOF = (handler, withoutCache = false) => authenticate(isOwnerOfSafe(handler, withoutCache));
+const HOF = (handler, withoutCache = false) => isOwnerOfSafe(handler, withoutCache);
 export default HOF;

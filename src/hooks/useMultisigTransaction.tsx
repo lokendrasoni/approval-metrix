@@ -34,41 +34,6 @@ function useMultisigTransaction(safeAddress, networkId) {
         return customToken;
     };
 
-    async function checkOnGnosis(safeTnxHash) {
-        console.log({ safeTnxHash });
-        return await new Promise((resolve, reject) => {
-            const interval = setInterval(async () => {
-                // Get Safe transaction details
-                const tx = await getSafeTransactionDetails(gnosisApiEndpoint, safeTnxHash);
-                console.log({
-                    isExecuted: tx?.isExecuted,
-                    isSuccesful: tx?.isSuccessful,
-                });
-
-                // Check IF transaction was executed
-                if (tx?.isExecuted) {
-                    // IF is failed, show error modal ELSE succcess modal
-                    if (!tx?.isSuccessful) {
-                        reject({ message: "Execution error" });
-                    } else {
-                        resolve(true);
-                    }
-                    setTimeout(() => {
-                        clearInterval(interval);
-                    }, 2000);
-                }
-            }, 3000);
-        });
-    }
-
-    const isExecutable = async currentNonce => {
-        const nonce = await safeSdk?.getNonce();
-        return {
-            canExecute: nonce == currentNonce,
-            nonceToExecute: nonce,
-        };
-    };
-
     const createMultisigTransaction = async ({
         payouts,
     }: {
@@ -292,7 +257,7 @@ function useMultisigTransaction(safeAddress, networkId) {
     return {
         handleAddConfirmation,
         createMultisigTransaction,
-        checkOnGnosis,
+
         loading,
     };
 }

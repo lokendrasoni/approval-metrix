@@ -1,12 +1,12 @@
-import { ISafeSchema } from "utils/types/SafeModel";
-import { NextApiRequest, NextApiResponse } from "next";
-import mongoose from "mongoose";
-import dbConnect from "utils/dbConnect";
 import isOwnerOfSafe from "middleware/isOwnerOfSafe";
 import Safe from "models/Safe";
 import Wallet from "models/Wallet";
-import { IWalletSchema } from "utils/types/WalletModel";
+import mongoose from "mongoose";
+import { NextApiRequest, NextApiResponse } from "next";
+import dbConnect from "utils/dbConnect";
 import sendEmail from "utils/sendEmail";
+import { ISafeSchema } from "utils/types/SafeModel";
+import { IWalletSchema } from "utils/types/WalletModel";
 
 interface NextRequest extends NextApiRequest {
     safeAddress: string;
@@ -126,15 +126,14 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
 
         const existingContributors = safe?.contributors || [];
 
-        const contributorsToAddCalc = [...existingContributors, ...contributorsToAdd];
-
-        const uniqueContributorsToAdd = contributorsToAddCalc.filter(objToAdd => {
+        const uniqueContributorsToAdd = contributorsToAdd.filter(objToAdd => {
             return !existingContributors.some(existingObj => {
                 return existingObj.wallet?.toString() == objToAdd.wallet?.toString();
             });
         });
+        const contributorsToAddCalc = [...existingContributors, ...uniqueContributorsToAdd];
 
-        safe.contributors = [...uniqueContributorsToAdd];
+        safe.contributors = [...contributorsToAddCalc];
         await safe.save();
         return res.status(201).json({ success: true });
     } catch (err) {

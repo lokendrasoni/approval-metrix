@@ -11,7 +11,6 @@ import {
     styled,
 } from "@mui/material";
 import { SafeAuthInitOptions, SafeAuthPack, SafeAuthUserInfo } from "@safe-global/auth-kit";
-import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
 import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -31,8 +30,6 @@ const SafeAuth = () => {
     const [userInfo, setUserInfo] = useState<SafeAuthUserInfo | null>(null);
     const [chainId, setChainId] = useState<string | undefined>();
     const [balance, setBalance] = useState<string | undefined>();
-    const [consoleMessage, setConsoleMessage] = useState<string>("");
-    const [consoleTitle, setConsoleTitle] = useState<string>("");
     const [provider, setProvider] = useState<BrowserProvider | undefined>();
 
     useEffect(() => {
@@ -123,122 +120,6 @@ const SafeAuth = () => {
     const logout = async () => {
         await safeAuthPack?.signOut();
         setSafeAuthSignInResponse(null);
-    };
-
-    const getUserInfo = async () => {
-        const userInfo = await safeAuthPack?.getUserInfo();
-
-        uiConsole("User Info", userInfo);
-    };
-
-    const getAccounts = async () => {
-        const accounts = await provider?.send("eth_accounts", []);
-
-        uiConsole("Accounts", accounts);
-    };
-
-    const getChainId = async () => {
-        const chainId = await provider?.send("eth_chainId", []);
-
-        uiConsole("ChainId", chainId);
-    };
-
-    const signAndExecuteSafeTx = async (index: number) => {
-        const safeAddress = safeAuthSignInResponse?.safes?.[index] || "0x";
-
-        const provider = new BrowserProvider(safeAuthPack?.getProvider() as Eip1193Provider);
-        const signer = await provider.getSigner();
-        const ethAdapter = new EthersAdapter({
-            ethers,
-            signerOrProvider: signer,
-        });
-        const protocolKit = await Safe.create({
-            safeAddress,
-            ethAdapter,
-        });
-
-        let tx = await protocolKit.createTransaction({
-            transactions: [
-                {
-                    to: ethers.getAddress(safeAuthSignInResponse?.eoa || "0x"),
-                    data: "0x",
-                    value: ethers.parseUnits("0.0001", "ether").toString(),
-                },
-            ],
-        });
-
-        tx = await protocolKit.signTransaction(tx);
-
-        const txResult = await protocolKit.executeTransaction(tx);
-        uiConsole("Safe Transaction Result", txResult);
-    };
-
-    const signMessage = async (data: any, method: string) => {
-        let signedMessage;
-
-        const params = {
-            data,
-            from: safeAuthSignInResponse?.eoa,
-        };
-
-        if (method === "eth_signTypedData") {
-            signedMessage = await provider?.send(method, [params.data, params.from]);
-        } else if (method === "eth_signTypedData_v3" || method === "eth_signTypedData_v4") {
-            signedMessage = await provider?.send(method, [
-                params.from,
-                JSON.stringify(params.data),
-            ]);
-        } else {
-            signedMessage = await (await provider?.getSigner())?.signMessage(data);
-        }
-
-        uiConsole("Signed Message", signedMessage);
-    };
-
-    const sendTransaction = async () => {
-        const tx = await provider?.send("eth_sendTransaction", [
-            {
-                from: safeAuthSignInResponse?.eoa,
-                to: safeAuthSignInResponse?.eoa,
-                value: ethers.parseUnits("0.00001", "ether").toString(),
-                gasLimit: 21000,
-            },
-        ]);
-
-        uiConsole("Transaction Response", tx);
-    };
-
-    const switchChain = async () => {
-        const result = await provider?.send("wallet_switchEthereumChain", [
-            {
-                chainId: "0x1",
-            },
-        ]);
-
-        uiConsole("Switch Chain", result);
-    };
-
-    const addChain = async () => {
-        const result = await provider?.send("wallet_addEthereumChain", [
-            {
-                chainId: "0x2105",
-                chainName: "Base",
-                nativeCurrency: {
-                    name: "ETH",
-                    symbol: "ETH",
-                    decimals: 18,
-                },
-                rpcUrls: ["https://base.publicnode.com"],
-                blockExplorerUrls: ["https://basescan.org/"],
-            },
-        ]);
-
-        uiConsole(`Add chain`, result);
-    };
-
-    const uiConsole = (title: string, message: unknown) => {
-        setConsoleTitle(title);
-        setConsoleMessage(typeof message === "string" ? message : JSON.stringify(message, null, 2));
     };
 
     const isLoggedIn = !!safeAuthPack?.isAuthenticated;

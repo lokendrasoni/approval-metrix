@@ -1,28 +1,16 @@
-import { Close } from "@mui/icons-material";
-import {
-    Button,
-    Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControlLabel,
-    Grid,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-} from "@mui/material";
+import { Button, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import GoogleAuth from "src/components/GoogleAuth";
 import Sidebar from "src/components/Sidebar";
+import AddContacts from "src/components/addContacts";
+import AddGoogleContacts from "src/components/addGoogleContacts";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
-import { MainContent, StyledContainer } from "./style";
+import { SET_SAFE_CONTRIBUTORS_ENDPOINT } from "src/queries/constants";
+import { useGetSafeContributors } from "src/queries/safes/api";
+import { MainContent, StyledContainer } from "styles/style";
 
 export default function Contributors() {
     const router = useRouter();
@@ -30,25 +18,15 @@ export default function Contributors() {
     const [googleContacts, setGoogleContacts] = useState([]);
     const [showGoogleModal, setShowGoogleModal] = useState(false);
     const [selectedContacts, setSelectedContacts] = useState([]);
+    const [showAddContactsModal, setShowAddContactsModal] = useState(false);
+    const [fields, setFields] = useState([{ name: "", email: "" }]);
 
     const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext) as SafeContextTypes;
 
-    const rowsData: any = fetch("/api/getSafeContributor", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "x-par-safe-address": safeAddress,
-            "x-par-network-id": "5",
-            "x-par-wallet-address": safeAuthSignInResponse?.eoa,
-        },
-    }).then(obj => obj.json());
-
-    const data = rowsData?.data?.map(row => {
-        return {
-            name: row.name,
-            email: row.email,
-            walletAddress: row.walletAddress,
-        };
+    const { data, refetch } = useGetSafeContributors({
+        "x-par-safe-address": safeAddress,
+        "x-par-network-id": 5,
+        "x-par-wallet-address": safeAuthSignInResponse?.eoa,
     });
 
     async function getPeople() {
@@ -71,6 +49,21 @@ export default function Contributors() {
         }
     }
 
+    async function setContributorSafes(contributors) {
+        const result = await fetch(`${SET_SAFE_CONTRIBUTORS_ENDPOINT}`, {
+            method: "POST",
+            headers: {
+                credentials: "include",
+                "content-type": "application/json",
+                "x-par-safe-address": safeAddress,
+                "x-par-network-id": "5",
+                "x-par-wallet-address": safeAuthSignInResponse?.eoa,
+            },
+            body: JSON.stringify({ contributors }),
+        });
+        return (result as any)?.data;
+    }
+
     useEffect(() => {
         if (status === "success") {
             getPeople();
@@ -81,7 +74,38 @@ export default function Contributors() {
         console.log(selectedContacts);
     }, [selectedContacts]);
 
-    const addContacts = async () => {};
+    const addContacts = async () => {
+        console.log(fields);
+        const resultData = setContributorSafes(fields);
+        console.log(resultData);
+        setShowAddContactsModal(false);
+        setFields([{ name: "", email: "" }]);
+        refetch();
+    };
+    const addGoogleContacts = async () => {
+        console.log(selectedContacts);
+        const resultData = setContributorSafes(selectedContacts);
+        console.log(resultData);
+        setShowAddContactsModal(false);
+        setSelectedContacts;
+        refetch();
+    };
+
+    const handleChange = (idx, event, type) => {
+        const values = [...fields];
+        console.log(values);
+        console.log(event.target.value);
+        if (event.target.value !== "") {
+            values[idx][type] = event.target.value;
+        }
+        setFields(values);
+    };
+
+    const handleAdd = () => {
+        const values = [...fields];
+        values.push({ name: "", email: "" });
+        setFields(values);
+    };
 
     return (
         <StyledContainer>
@@ -100,10 +124,17 @@ export default function Contributors() {
                     </Grid>
                     <Grid item xs={4}>
                         <GoogleAuth />
+                        <Button
+                            variant="contained"
+                            sx={{ marginTop: "10px" }}
+                            onClick={() => setShowAddContactsModal(true)}
+                        >
+                            Add Contacts
+                        </Button>
                     </Grid>
                 </Grid>
                 <hr style={{ marginTop: "0", marginBottom: "20px" }} />
-                {data && data.length > 0 ? (
+                {data && data?.contributors?.length > 0 ? (
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                         <TableHead>
                             <TableRow>
@@ -113,105 +144,45 @@ export default function Contributors() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data?.map((row: any) => {
-                                <TableRow
-                                    key={row.name}
-                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell>{row.email}</TableCell>
-                                    <TableCell>
-                                        {row.walletAddress ? row.walletAddress : "N/A"}
-                                    </TableCell>
-                                </TableRow>;
+                            {data?.contributors?.map((row: any) => {
+                                return (
+                                    <TableRow
+                                        key={row.email}
+                                        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {row.name}
+                                        </TableCell>
+                                        <TableCell>{row.email}</TableCell>
+                                        <TableCell>
+                                            {row.walletAddress ? row.walletAddress : "N/A"}
+                                        </TableCell>
+                                    </TableRow>
+                                );
                             })}
-                            ;
                         </TableBody>
                     </Table>
                 ) : (
                     <p>No contributors added yet.</p>
                 )}
 
-                <Dialog
-                    sx={{
-                        ".MuiPaper-root": {
-                            width: "500px !important",
-                            minHeight: "320px !important",
-                            background: "white",
-                            boxShadow: "2px 20px 48px rgba(37, 39, 79, 0.12);",
-                            borderRadius: "8px",
-                        },
-                    }}
-                    open={showGoogleModal}
-                    onClose={() => setShowGoogleModal(false)}
-                >
-                    <DialogTitle>Import Contacts</DialogTitle>
-                    <IconButton
-                        onClick={() => setShowGoogleModal(false)}
-                        sx={{
-                            position: "absolute",
-                            right: 8,
-                            top: 8,
-                            color: theme => theme.palette.grey[500],
-                        }}
-                    >
-                        <Close />
-                    </IconButton>
-                    <DialogContent dividers>
-                        <div>
-                            {googleContacts.map(person => {
-                                const labelName =
-                                    person?.names[0]?.displayName +
-                                        " - " +
-                                        person?.emailAddresses[0]?.value || "";
-                                return (
-                                    <FormControlLabel
-                                        label={labelName}
-                                        key={person?.resourceName}
-                                        control={
-                                            <Checkbox
-                                                key={person?.resourceName}
-                                                onChange={e => {
-                                                    if (e.target.checked) {
-                                                        setSelectedContacts([
-                                                            ...selectedContacts,
-                                                            {
-                                                                name: person?.names[0]?.displayName,
-                                                                email: person?.emailAddresses[0]
-                                                                    ?.value,
-                                                                resourceName: person?.resourceName,
-                                                            },
-                                                        ]);
-                                                    } else {
-                                                        setSelectedContacts(
-                                                            selectedContacts.filter(
-                                                                contact =>
-                                                                    contact.resourceName !==
-                                                                    person.resourceName,
-                                                            ),
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                        }
-                                    />
-                                );
-                            })}
-                        </div>
-                    </DialogContent>
+                <AddContacts
+                    showAddContactsModal={showAddContactsModal}
+                    setShowAddContactsModal={setShowAddContactsModal}
+                    fields={fields}
+                    handleChange={handleChange}
+                    handleAdd={handleAdd}
+                    addContacts={addContacts}
+                />
 
-                    <DialogActions
-                        sx={{
-                            padding: "20px",
-                        }}
-                    >
-                        <Button variant="contained" onClick={addContacts}>
-                            Import
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                <AddGoogleContacts
+                    showGoogleModal={showGoogleModal}
+                    setShowGoogleModal={setShowGoogleModal}
+                    googleContacts={googleContacts}
+                    setSelectedContacts={setSelectedContacts}
+                    selectedContacts={selectedContacts}
+                    addGoogleContacts={addGoogleContacts}
+                />
             </MainContent>
         </StyledContainer>
     );

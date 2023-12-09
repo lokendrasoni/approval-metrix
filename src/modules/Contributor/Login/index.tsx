@@ -14,8 +14,8 @@ export default function ContributorLogin() {
             height={"100vh"}
             width={"100%"}
         >
-            <Button variant="outlined" color="primary" onClick={handleLogin}>
-                Sign In
+            <Button variant="contained" color="primary" onClick={handleLogin}>
+                Sign In with Contributor
             </Button>
         </Box>
     );

@@ -7,4 +7,5 @@ export type SafeContextTypes = {
     setSafeAddress: Function;
     safeAuthSignInResponse: AuthKitSignInData;
     setSafeAuthSignInResponse: Dispatch<SetStateAction<AuthKitSignInData | null>>;
+    tokensInSafe: any;
 };

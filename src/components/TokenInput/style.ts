@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { MenuItem, Select, TextField } from "@mui/material";
-import theme from "styles/theme";
 import { TokenInputProps } from "./types";
 
 export const ComponentWrapper: any = styled.div`
@@ -42,9 +41,9 @@ export const StyledInputField: any = styled(TextField)`
 
             padding: 8px 10px;
             background: ${(props: TokenInputProps) => {
-                if (props.disabled) return props.theme.v2.Grey[1];
-                if (props.varianttype === "primary") return props.theme.v2.Grey[1];
-                if (props.varianttype === "secondary") return props.theme.v2.White;
+                if (props.disabled) return "white";
+                if (props.varianttype === "primary") return "white";
+                if (props.varianttype === "secondary") return "white";
             }};
 
             border: ${(props: TokenInputProps) => {
@@ -52,10 +51,10 @@ export const StyledInputField: any = styled(TextField)`
                     return "none";
                 }
                 if (props.varianttype === "secondary") {
-                    return `1px solid ${props.theme.v2.Grey[4]}`;
+                    return `1px solid black`;
                 }
                 if (props.varianttype === "error") {
-                    return `1px solid ${props.theme.v2.Error[7]}`;
+                    return `1px solid red`;
                 } else {
                     return "none";
                 }
@@ -63,17 +62,17 @@ export const StyledInputField: any = styled(TextField)`
 
             border: ${(props: TokenInputProps) => {
                 if (props.active) {
-                    if (props.varianttype === "primary") return props.theme.v2.White;
+                    if (props.varianttype === "primary") return "white";
                 } else {
                     if (props.hover) {
                         if (props.disabled) {
                             return "none";
                         }
                         if (props.varianttype === "secondary" || props.varianttype === "primary") {
-                            return `1px solid ${props.theme.v2.Grey[7]}`;
+                            return `1px solid black`;
                         }
                         if (props.varianttype === "error") {
-                            return `1px solid ${props.theme.v2.Error[7]}`;
+                            return `1px solid red`;
                         } else {
                             return "none";
                         }
@@ -84,13 +83,13 @@ export const StyledInputField: any = styled(TextField)`
             background: ${(props: TokenInputProps) => {
                 if (props.active) {
                     if (props.varianttype === "error") {
-                        return `1px solid ${props.theme.v2.Error[7]} !important`;
+                        return `1px solid red !important`;
                     }
-                    if (props.varianttype === "primary") return props.theme.v2.White;
-                    return `1px solid ${props.theme.v2.Primary[7]} !important`;
+                    if (props.varianttype === "primary") return "white";
+                    return `1px solid blue !important`;
                 } else {
                     if (props.hover) {
-                        if (props.varianttype === "primary") return props.theme.v2.White;
+                        if (props.varianttype === "primary") return "white";
                     }
                 }
             }};
@@ -104,9 +103,9 @@ export const StyledInputField: any = styled(TextField)`
             &.Mui-focused {
                 border: ${(props: TokenInputProps) => {
                     if (props.varianttype === "error") {
-                        return `1px solid ${props.theme.v2.Error[7]}`;
+                        return `1px solid red`;
                     } else {
-                        return `1px solid ${theme.v2.Primary[7]}`;
+                        return `1px solid blue`;
                     }
                 }};
 
@@ -154,9 +153,9 @@ export const StyledSelect: any = styled(Select)`
         padding: 8px 0px;
 
         background: ${(props: TokenInputProps) => {
-            // if (props.disabled) return props.theme.v2.Grey[1];
-            if (props.type === "primary") return props.theme.v2.Grey[1];
-            if (props.type === "secondary") return props.theme.v2.White;
+            // if (props.disabled) return "white";
+            if (props.type === "primary") return "white";
+            if (props.type === "secondary") return "white";
         }};
 
         border: ${(props: TokenInputProps) => {
@@ -164,10 +163,10 @@ export const StyledSelect: any = styled(Select)`
             //     return "none";
             // }
             if (props.type === "secondary") {
-                return `1px solid ${props.theme.v2.Grey[4]}`;
+                return `1px solid black`;
             }
             if (props.type === "error") {
-                return `1px solid ${props.theme.v2.Error[7]}`;
+                return `1px solid red`;
             } else {
                 return "none";
             }
@@ -176,19 +175,19 @@ export const StyledSelect: any = styled(Select)`
         border: ${(props: TokenInputProps) => {
             if (props.active) {
                 if (props.type === "error") {
-                    return `1px solid ${props.theme.v2.Error[7]} !important`;
+                    return `1px solid red !important`;
                 }
-                return `1px solid ${props.theme.v2.Primary[7]} !important`;
+                return `1px solid blue !important`;
             } else {
                 if (props.hover) {
                     // if (props.disabled) {
                     //     return "none";
                     // }
                     if (props.type === "secondary" || props.type === "primary") {
-                        return `1px solid ${props.theme.v2.Grey[7]}`;
+                        return `1px solid black`;
                     }
                     if (props.type === "error") {
-                        return `1px solid ${props.theme.v2.Error[7]}`;
+                        return `1px solid red`;
                     } else {
                         return "none";
                     }
@@ -198,13 +197,13 @@ export const StyledSelect: any = styled(Select)`
 
         background: ${(props: TokenInputProps) => {
             if (props.active) {
-                return `${props.theme.v2.White} !important`;
+                return `${"white"} !important`;
             } else {
                 if (props.hover) {
                     // if (props.disabled) {
-                    //     return props.theme.v2.Grey[1];
+                    //     return "white";
                     // }
-                    if (props.type === "primary") return props.theme.v2.White;
+                    if (props.type === "primary") return "white";
                 }
             }
         }};
@@ -273,27 +272,27 @@ export const DollarContainer: any = styled.div`
     padding-right: ${(props: any) => props.isNonFixedUSD && "0px"};
 
     background: ${(props: TokenInputProps) => {
-        if (props.disabled) return props.theme.v2.Grey[1];
-        if (props.active) return props.theme.v2.White;
-        if (props.hover) return props.theme.v2.White;
-        if (props.type === "primary") return props.theme.v2.Grey[1];
-        if (props.type === "secondary") return props.theme.v2.White;
+        if (props.disabled) return "white";
+        if (props.active) return "white";
+        if (props.hover) return "white";
+        if (props.type === "primary") return "white";
+        if (props.type === "secondary") return "white";
     }};
 
     border-width: 1px 0px 1px 1px;
 
     border: ${(props: TokenInputProps) => {
         if (props.disabled) {
-            return `0px solid ${props.theme.v2.Grey[4]}`;
+            return `0px solid black`;
         }
         if (props.type === "primary") {
-            return `0px solid ${props.theme.v2.Grey[4]}`;
+            return `0px solid black`;
         }
         if (props.type === "secondary") {
-            return `1px solid ${props.theme.v2.Grey[4]}`;
+            return `1px solid black`;
         }
         if (props.type === "error") {
-            return `1px solid ${props.theme.v2.Error[7]}`;
+            return `1px solid red`;
         } else {
             return "none";
         }
@@ -302,16 +301,16 @@ export const DollarContainer: any = styled.div`
     border-style: solid;
     border-right: ${(props: TokenInputProps) => {
         if (props.disabled) {
-            return `0px solid ${props.theme.v2.Grey[4]}`;
+            return `0px solid black`;
         }
         if (props.type === "primary") {
-            return `0px solid ${props.theme.v2.Grey[4]}`;
+            return `0px solid black`;
         }
         if (props.type === "secondary") {
-            return `1px solid ${props.theme.v2.Grey[4]}`;
+            return `1px solid black`;
         }
         if (props.type === "error") {
-            return `1px solid ${props.theme.v2.Error[7]}`;
+            return `1px solid red`;
         } else {
             return "none";
         }
@@ -320,19 +319,19 @@ export const DollarContainer: any = styled.div`
     border: ${(props: TokenInputProps) => {
         if (props.active) {
             if (props.type === "error") {
-                return `1px solid ${props.theme.v2.Error[7]} !important`;
+                return `1px solid red !important`;
             }
-            return `1px solid ${props.theme.v2.Primary[7]} !important`;
+            return `1px solid blue !important`;
         } else {
             if (props.hover) {
                 if (props.disabled) {
-                    return `0px 1px 0px 0px solid ${props.theme.v2.Grey[4]}`;
+                    return `0px 1px 0px 0px solid black`;
                 }
                 if (props.type === "secondary" || props.type === "primary") {
-                    return `1px solid ${props.theme.v2.Grey[7]}`;
+                    return `1px solid black`;
                 }
                 if (props.type === "error") {
-                    return `1px solid ${props.theme.v2.Error[7]}`;
+                    return `1px solid red`;
                 } else {
                     return "none";
                 }
@@ -354,18 +353,17 @@ export const StyledMenuItem: any = styled(MenuItem)`
     &.MuiMenuItem-root {
         height: 30px;
         &:hover {
-            background-color: ${(props: TokenInputProps) => props.theme.v2.Grey[1]};
+            background-color: white;
         }
-        border-bottom: ${(props: TokenInputProps) =>
-            props.seperator && `1px solid ${props.theme.v2.Grey[5]}`};
+        border-bottom: ${(props: TokenInputProps) => props.seperator && `1px solid grey`};
         &:last-child {
             border-bottom: none;
         }
     }
     &.Mui-selected {
-        background-color: ${(props: TokenInputProps) => props.theme.v2.Primary[1]};
+        background-color: blue;
     }
     &.Mui-focusVisible {
-        background-color: ${(props: TokenInputProps) => props.theme.v2.White};
+        background-color: white;
     }
 `;

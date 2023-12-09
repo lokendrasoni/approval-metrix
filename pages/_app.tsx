@@ -4,9 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ContributorContextProvider } from "src/contexts/ContributorContext";
 import createEmotionCache from "../styles/createEmotionCache";
 const CssBaseline = dynamic(() => import("@mui/material/CssBaseline"));
-const WalletcontextProvider = dynamic(() =>
-    import("src/contexts/Walletcontext").then(mod => mod.WalletcontextProvider),
-);
+
 const Head = dynamic(() => import("next/head"));
 const NextNProgress = dynamic(() => import("nextjs-progressbar"));
 const CacheProvider = dynamic(() => import("@emotion/react").then(module => module.CacheProvider));
@@ -48,14 +46,12 @@ export default function AppRoot(props: any) {
             />
             <CacheProvider value={emotionCache}>
                 <QueryClientProvider client={queryClient}>
-                    <WalletcontextProvider>
-                        <ContributorContextProvider>
-                            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-                            <CssBaseline />
+                    <ContributorContextProvider>
+                        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                        <CssBaseline />
 
-                            <Component {...pageProps} />
-                        </ContributorContextProvider>
-                    </WalletcontextProvider>
+                        <Component {...pageProps} />
+                    </ContributorContextProvider>
                 </QueryClientProvider>
             </CacheProvider>
         </>

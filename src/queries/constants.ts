@@ -4,6 +4,7 @@ export const LOGIN_URL = `/api/auth/login`;
 export const LOGOUT_URL = `/api/auth/logout`;
 export const CONTRIBUTOR_GET_SAFES_ENDPOINT = `/api/contributor/getSafes`;
 export const GET_SAFE_CONTRIBUTORS_ENDPOINT = `/api/getSafeContributor`;
+export const GET_TOKENS_BY_SAFE = "get-tokens-by-safe";
 
 //QUERY_NAME
 export const LOGIN = "login";

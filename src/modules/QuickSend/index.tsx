@@ -32,12 +32,12 @@ export default function QuickSend() {
                             >
                                 <MenuItem value={""}>Select a contributor</MenuItem>
                             </Select>
-                            <TokenInput
+                            {/* <TokenInput
                                 label="Amount"
                                 amount={amount}
                                 handleAmountChange={(e, v) => setAmount(v)}
                                 tokensInSafe={}
-                            />
+                            /> */}
                         </Box>
                     </Box>
                 </>

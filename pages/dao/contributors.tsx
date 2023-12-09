@@ -1,5 +1,5 @@
 import { Close } from '@mui/icons-material';
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Table } from '@mui/material';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
@@ -17,7 +17,7 @@ export default function Contributors() {
 
   const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext);
 
-  const rowsData: any = fetch('/api/safe/get_contributors', {
+  const rowsData: any = fetch('/api/get_contributors', {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
@@ -61,36 +61,6 @@ export default function Contributors() {
     console.log(selectedContacts);
   }, [selectedContacts]);
 
-  const columns = [
-    {
-      id: "name",
-      field: "name",
-      label: "Name",
-      styles: { width: "5%", borderRight: "1px solid rgba(224, 224, 224, 1)" },
-      renderCell: (data: any) => {
-        <p>{data?.name}</p>
-      }
-    },
-    {
-      id: "email",
-      field: "email",
-      label: "Email",
-      styles: { width: "5%", borderRight: "1px solid rgba(224, 224, 224, 1)" },
-      renderCell: (data: any) => {
-        <p>{data?.email}</p>
-      }
-    },
-    {
-      id: "address",
-      field: "walletAddress",
-      label: "Address",
-      styles: { width: "5%", borderRight: "1px solid rgba(224, 224, 224, 1)" },
-      renderCell: (data: any) => {
-        <p>{data?.walletAddress ? data?.walletAddress : "N/A"}</p>
-      }
-    },
-  ];
-
   const addContacts = async () => { };
 
   return (
@@ -110,12 +80,32 @@ export default function Contributors() {
           </Grid>
         </Grid>
         <hr style={{ marginTop: '0', marginBottom: '20px' }} />
-
-        <Table
-          columns={columns}
-          rows={data}
-        ></Table>
-
+        {data && data.length > 0 ?
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Address</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data?.map((row: any) => {
+                <TableRow
+                  key={row.name}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.walletAddress ? row.walletAddress : "N/A"}</TableCell>
+                </TableRow>
+              })};
+            </TableBody>
+          </Table>
+          : <p>No contributors added yet.</p>
+        }
 
         <Dialog sx={{
           ".MuiPaper-root": {

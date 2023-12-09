@@ -1,4 +1,4 @@
-import { AppBar as MuiAppBar, Typography, styled, Box, Button } from "@mui/material";
+import { Box, Button, Card, Typography, styled } from "@mui/material";
 import { SafeAuthUserInfo } from "@safe-global/auth-kit";
 
 type AppBarProps = {
@@ -6,48 +6,99 @@ type AppBarProps = {
     onLogin: () => void;
     onLogout: () => void;
     userInfo?: SafeAuthUserInfo;
+    eoa?: string;
 };
 
-const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo }: AppBarProps) => {
-    return (
-        <StyledAppBar position="static" color="default">
-            <Typography variant="h3" pl={4} fontWeight={700}>
-                Auth Provider Demo
-            </Typography>
+const minifyAddress = (address, middleChars = 6, endChars = 4) => {
+    if (!address) return "";
+    if (address.length < 20) return address;
+    if (address.substr(-4) == ".eth") return address;
+    return `${address.substring(0, middleChars + 2)}...${address.substring(
+        address.length - endChars,
+    )}`;
+};
 
-            <Box mr={5}>
-                {isLoggedIn ? (
-                    <Box display="flex" alignItems="center">
-                        {userInfo && (
-                            <Typography variant="body1" fontWeight={700}>
-                                Hello {userInfo.name || userInfo.email} !!
+const replaceAddresswithMinification = (string, middleChars = 7, endChars = 4) => {
+    if (!string) return "";
+
+    return string.replaceAll(/0x[a-zA-Z0-9]{64}/g, match => {
+        return minifyAddress(match, middleChars, endChars);
+    });
+};
+
+const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) => {
+    console.log(eoa, "state");
+    return (
+        <>
+            {!isLoggedIn && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "120px",
+                        justifyContent: "center",
+                    }}
+                >
+                    <LoginForm>
+                        <Box
+                            mr={5}
+                            width={"100%"}
+                            height={"50%"}
+                            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                        >
+                            <Typography variant="h4" pl={4} fontWeight={600} textAlign={"center"}>
+                                Hey Guys!
                             </Typography>
+                        </Box>
+
+                        <Box
+                            mr={5}
+                            width={"100%"}
+                            height={"50%"}
+                            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                        >
+                            <Button variant="contained" onClick={onLogin} sx={{ width: "50%" }}>
+                                Login
+                            </Button>
+                        </Box>
+                    </LoginForm>
+                </Box>
+            )}
+            {isLoggedIn && (
+                <>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent={"flex-end"}
+                        paddingRight={"25px"}
+                        marginTop={"-50px"}
+                    >
+                        {userInfo && (
+                            <>
+                                <Typography variant="body1" fontWeight={700}>
+                                    Hello {userInfo.name || userInfo.email} (
+                                    {minifyAddress(eoa, 4, 4)})
+                                </Typography>
+                            </>
                         )}
                         <Button variant="contained" onClick={onLogout} sx={{ ml: 2 }}>
                             Log Out
                         </Button>
                     </Box>
-                ) : (
-                    <Button variant="contained" onClick={onLogin}>
-                        Login
-                    </Button>
-                )}
-            </Box>
-        </StyledAppBar>
+                </>
+            )}
+        </>
     );
 };
 
-const StyledAppBar = styled(MuiAppBar)`
+const LoginForm = styled(Card)`
     && {
-        position: sticky;
-        top: 0;
-        background: ${({ theme }) => theme.palette.background.paper};
-        height: 70px;
+        border: 1px solid grey;
+        height: 25rem;
+        width: 30%;
         align-items: center;
-        justify-content: space-between;
-        flex-direction: row;
-        border-bottom: 2px solid ${({ theme }) => theme.palette.background.paper};
-        box-shadow: none;
+        justify-content: center;
+        border-radius: 20px;
     }
 `;
 

@@ -10,7 +10,7 @@ const web3auth = new Web3Auth({
         process.env.NEXT_PUBLIC_NODE_ENV === "development" ? "sapphire_devnet" : "sapphire_mainnet",
     chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
-        chainId: "0x1",
+        chainId: "0x5",
         rpcTarget: process.env.NEXT_PUBLIC_TENDERLY_RPC,
     },
     uiConfig: {

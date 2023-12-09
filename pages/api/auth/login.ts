@@ -30,6 +30,7 @@ const login = async (req: NextApiRequest, res: NextResponse) => {
         message,
         isArgent = false,
         rememberLogin,
+        email,
     } = req.body;
 
     if (!walletAddress || !signedMessage || !networkId) {
@@ -56,9 +57,9 @@ const login = async (req: NextApiRequest, res: NextResponse) => {
             // Convet message signed by the user to SiweMessage format to validate further
             const siweMessage = new SiweMessage(message);
             // extract fields to validate signature
-            const fields = await siweMessage.validate(signedMessage);
+            const fields = await siweMessage.verify({ signature: signedMessage });
             // Compare the recovered address with the address from request
-            if (getAddress(fields.address) !== getAddress(walletAddress)) {
+            if (getAddress(fields?.data?.address) !== getAddress(walletAddress)) {
                 return res.status(400).json({
                     log: `Signature doesn't match with Wallet Address`,
                     success: false,
@@ -73,21 +74,20 @@ const login = async (req: NextApiRequest, res: NextResponse) => {
         }
     }
 
-    // if validation doesn't fail, check if wallet exists in the DB - create if doesn't
-    let wallet: IWalletSchema = await (Wallet as any).findOneOrCreate(walletAddress);
+    // if validation doesn't fail, check if email exists in the DB
+    let wallet: IWalletSchema = await (Wallet as any).findOne({ email: email });
 
-    // if (wallet.recievingAddresses?.length < 1) {
-    //     wallet.recievingAddresses.push({
-    //         address: walletAddress,
-    //         receiveOn: "address",
-    //         ens: "",
-    //         isDefault: true,
-    //         isPermanentAddress: true,
-    //         name: "My Account",
-    //     });
-    //     await wallet.save();
-    // }
+    if (!wallet) {
+        return res.status(400).json({
+            log: `Error in logging!`,
+            error: "Email does not exist",
+            success: false,
+        });
+    }
 
+    if (!wallet.address) {
+        await Wallet.updateOne({ _id: wallet?._id }, { address: walletAddress });
+    }
     // Sign JWT
     const access_token = jwt.sign(
         {

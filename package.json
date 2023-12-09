@@ -53,7 +53,7 @@
         "react": "^18",
         "react-dom": "^18",
         "react-query": "^3.39.2",
-        "siwe": "1.1.6"
+        "siwe": "2.1.4"
     },
     "devDependencies": {
         "@types/node": "^20",

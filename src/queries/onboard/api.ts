@@ -3,7 +3,7 @@ import { LOGIN, LOGIN_URL, LOGOUT_URL } from "../constants";
 import fetchJSON from "../fetchJSON";
 
 export function useLoginapi(
-    { signedMessage, walletAddress, networkId, isArgent, message, rememberLogin }: any,
+    { signedMessage, walletAddress, networkId, isArgent, message, rememberLogin, email }: any,
     options: {},
 ) {
     return useQuery(
@@ -17,6 +17,7 @@ export function useLoginapi(
                     networkId,
                     isArgent,
                     message,
+                    email,
                     rememberLogin,
                 }),
                 headers: {

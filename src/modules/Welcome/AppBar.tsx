@@ -28,7 +28,6 @@ const replaceAddresswithMinification = (string, middleChars = 7, endChars = 4) =
 };
 
 const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) => {
-    console.log(userInfo.name, "userInfo");
     const router = useRouter();
     return (
         <>

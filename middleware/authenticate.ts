@@ -1,4 +1,4 @@
-import { getAddress } from "ethers/lib/utils";
+import { getAddress } from "ethers";
 import jwt from "jsonwebtoken";
 import dbConnect from "utils/dbConnect";
 const authenticate = handler => {

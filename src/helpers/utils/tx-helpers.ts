@@ -1,4 +1,4 @@
-import { parseUnits } from "ethers/lib/utils";
+import { parseUnits } from "ethers";
 
 import { ethers } from "ethers";
 import fromExponential from "from-exponential";
@@ -23,7 +23,7 @@ export const getAmountFromWei = (tokenAmount: any, decimals: any, precision = un
         }
     }
     if (precision) {
-        return Number(ethers.utils.formatUnits(amount, decimals)).toFixed(precision);
+        return Number(ethers.formatUnits(amount, decimals)).toFixed(precision);
     }
-    return Number(ethers.utils.formatUnits(amount, decimals));
+    return Number(ethers.formatUnits(amount, decimals));
 };

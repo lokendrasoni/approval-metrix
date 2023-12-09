@@ -1,7 +1,5 @@
 import { Typography } from "@mui/material";
 
-import { ethers } from "ethers";
-import { minifyAddress } from "src/helpers/utils/web3Utils";
 import TokenLogo from "../TokenLogo";
 import Tooltip from "../Tooltip";
 import { StyledMenuItem } from "./style";
@@ -79,7 +77,7 @@ export const renderOptions = (
                             }}
                         >
                             {"  "}(
-                            {ethers.isAddress(tokenAddress) ? minifyAddress(tokenAddress) : symbol})
+                            {symbol})
                         </Typography>
                     </div>
                 </StyledMenuItem>

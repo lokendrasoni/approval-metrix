@@ -1,6 +1,8 @@
-import { Box, Button, Card, Typography, styled } from "@mui/material";
+import { Box, Button, Card, Divider, Typography, styled } from "@mui/material";
 import { SafeAuthUserInfo } from "@safe-global/auth-kit";
 import { useRouter } from "next/router";
+import { theme } from "src/constants/colors";
+import { CustomButton } from "../styles";
 
 type AppBarProps = {
     isLoggedIn: boolean;
@@ -29,51 +31,85 @@ const replaceAddresswithMinification = (string, middleChars = 7, endChars = 4) =
 
 const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) => {
     const router = useRouter();
+    const handleContributorLogin = () => {
+        router.push("/contributor");
+    };
+
     return (
         <>
             {!isLoggedIn && (
                 <Box
                     sx={{
                         display: "flex",
-                        alignItems: "center",
-                        marginTop: "120px",
-                        justifyContent: "center",
+                        width: "100vw",
+                        height: "100vh",
                     }}
                 >
-                    <LoginForm>
-                        <Box
-                            mr={5}
-                            width={"100%"}
-                            height={"50%"}
-                            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-                        >
-                            <Typography variant="h4" pl={4} fontWeight={600} textAlign={"center"}>
-                                gm folks!
-                            </Typography>
-                        </Box>
-
-                        <Box
-                            mr={5}
-                            width={"100%"}
-                            height={"50%"}
+                    <Box
+                        sx={{
+                            background: theme.grey[900],
+                            flex: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "20px",
+                        }}
+                    >
+                        <Typography
+                            variant="h4"
+                            pl={4}
+                            fontWeight={600}
                             sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-around",
+                                fontSize: "70px",
+                                color: "white",
                             }}
                         >
-                            <Button variant="contained" onClick={onLogin} sx={{ width: "40%" }}>
-                                Login as DAO
-                            </Button>
-                            <Button
-                                variant="contained"
-                                sx={{ width: "40%" }}
-                                onClick={() => router.push("/contributor")}
-                            >
-                                Login as Contributor
-                            </Button>
-                        </Box>
-                    </LoginForm>
+                            Welcome
+                            <br />
+                            to
+                            <br />
+                            Buildoors
+                        </Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            background: "white",
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: "20px",
+                            gap: "20px",
+                        }}
+                    >
+                        <CustomButton
+                            variant="contained"
+                            onClick={onLogin}
+                            sx={{
+                                background: theme.grey[900],
+                                width: "50%",
+                            }}
+                        >
+                            {" "}
+                            Sign in as DAO
+                        </CustomButton>
+                        <Divider
+                            flexItem
+                            orientation="horizontal"
+                            variant="middle"
+                            sx={{ width: "50%", marginX: "auto" }}
+                        />
+                        <CustomButton
+                            variant="outlined"
+                            onClick={handleContributorLogin}
+                            sx={{
+                                width: "50%",
+                            }}
+                        >
+                            {" "}
+                            Sign in as contributor
+                        </CustomButton>
+                    </Box>
                 </Box>
             )}
             {isLoggedIn && (
@@ -87,13 +123,25 @@ const AppBar = ({ isLoggedIn, onLogin, onLogout, userInfo, eoa }: AppBarProps) =
                     >
                         {userInfo && (
                             <>
-                                <Typography variant="body1" fontWeight={700}>
+                                <Typography
+                                    variant="body1"
+                                    fontWeight={700}
+                                    display={"flex"}
+                                    justifyContent={"flex-end"}
+                                    alignItems={"center"}
+                                    marginRight={"20px"}
+                                    color={"white"}
+                                >
                                     Hello {userInfo.name || userInfo.email} (
                                     {minifyAddress(eoa, 4, 4)})
                                 </Typography>
                             </>
                         )}
-                        <Button variant="contained" onClick={onLogout} sx={{ ml: 2 }}>
+                        <Button
+                            variant="outlined"
+                            onClick={onLogout}
+                            sx={{ ml: 2, color: "white", border: "1px solid white" }}
+                        >
                             Log Out
                         </Button>
                     </Box>

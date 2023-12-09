@@ -20,7 +20,7 @@ import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { SET_SAFE_CONTRIBUTORS_ENDPOINT } from "src/queries/constants";
 import { useGetSafeContributors } from "src/queries/safes/api";
-import { MainContent, StyledContainer } from "./style";
+import { MainContent, StyledContainer } from "styles/style";
 
 export default function Contributors() {
     const router = useRouter();

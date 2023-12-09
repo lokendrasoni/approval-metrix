@@ -11,7 +11,7 @@ export const verifyArgent = async (
 ) => {
     const INFURA_TOKEN = process.env.NEXT_PUBLIC_INFURA_TOKEN;
     const url = `https://mainnet.infura.io/v3/${INFURA_TOKEN}`;
-    const provider = new ethers.providers.JsonRpcProvider(url);
+    const provider = new ethers.JsonRpcProvider(url);
 
     const argentWallet = new ethers.Contract(walletAddress, argentABI, provider);
     try {

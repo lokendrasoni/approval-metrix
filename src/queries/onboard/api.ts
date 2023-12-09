@@ -1,12 +1,8 @@
 import { useQuery } from "react-query";
-import {
-    LOGIN,
-    LOGIN_URL,
-    LOGOUT_URL,
-} from "../constants";
+import { LOGIN, LOGIN_URL, LOGOUT_URL } from "../constants";
 import fetchJSON from "../fetchJSON";
 
-export function useLoginV3api(
+export function useLoginapi(
     { signedMessage, walletAddress, networkId, isArgent, message, rememberLogin }: any,
     options: {},
 ) {
@@ -35,9 +31,9 @@ export function useLoginV3api(
     );
 }
 
-export function useLogoutV3api(options: {}) {
+export function useLogoutapi(options: {}) {
     return useQuery(
-        "clearcookie-v3",
+        "clearcookie",
         async () =>
             await fetchJSON(LOGOUT_URL, {
                 method: "POST",

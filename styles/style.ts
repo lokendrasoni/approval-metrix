@@ -14,7 +14,7 @@ export const StyledContainer: any = styled(Container)`
 export const SidebarDiv: any = styled.div`
     width: 20vw;
     height: 100vh;
-    background-color: #1976d2;
+    background-color: #1a202c;
     color: #fff;
     padding: 20px;
 `;

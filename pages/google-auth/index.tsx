@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -7,34 +6,15 @@ const GoogleContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [authUrl, setAuthUrl] = useState(null);
   const { status, authCode } = router.query;
-=======
-import { Button, List, ListItem, ListItemText } from "@mui/material";
-import { useState } from "react";
-
-const GoogleAuth = () => {
-  const [userList, setUserList] = useState({});
-  // const clientID = "470709605040-evl095kp0mc67bqccblktf54fppbmccj.apps.googleusercontent.com";
-  // const clientSecret = "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";
-  // const redirect_uri = 'https://localhost:3000';
-  // const scopes = ['https://www.googleapis.com/auth/admin.directory.user.readonly'];
->>>>>>> 748f3dc (google-auth trial)
 
   const fetchData = async () => {
     try {
-<<<<<<< HEAD
       const authUrlLocal = await fetch('api/google/google_auth_function').then(obj => obj.json());
       setAuthUrl(authUrlLocal.url);
     } catch (error) {
       console.error('Error fetching contacts:', error.message);
-=======
-      const response = await fetch('api/google_auth_function');
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error('Error fetching users:', error.message);
->>>>>>> 748f3dc (google-auth trial)
     }
-  }
+  };
 
   async function getPeople() {
     console.log(authCode, status)

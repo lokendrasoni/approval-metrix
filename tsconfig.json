@@ -21,7 +21,8 @@
         "**/*.ts",
         "**/*.tsx",
         "pages/_error.jsx",
-        "src/helpers/onboard/initWeb3Onboard.js"
+        "src/helpers/onboard/initWeb3Onboard.js",
+        "src/modules/Welcome/SafeAuth.jsx"
     ],
     "exclude": ["node_modules"]
 }

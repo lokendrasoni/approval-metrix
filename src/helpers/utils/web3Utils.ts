@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-
 export const minifySafeName = (name, maxChar) => {
     if (!name) return "";
 
@@ -78,6 +76,18 @@ export const formatAmount = (
                         minimumFractionDigits: minDecimal,
                         maximumFractionDigits: maxDecimal,
                     });
+    Math.abs(Number(string)) >= 1.0e12
+        ? truncate(Number(string) / 1.0e12, maxDecimal) + "T"
+        : // Nine Zeroes for Billions
+          Math.abs(Number(string)) >= 1.0e9
+          ? truncate(Number(string) / 1.0e9, maxDecimal) + "B"
+          : // Six Zeroes for Millions
+            Math.abs(Number(string)) >= 1.0e6
+            ? truncate(Number(string) / 1.0e6, maxDecimal) + "M"
+            : Number(truncatedString).toLocaleString(undefined, {
+                  minimumFractionDigits: minDecimal,
+                  maximumFractionDigits: maxDecimal,
+              });
     return withDeno ? `$${calculations}` : calculations;
 };
 
@@ -169,6 +179,29 @@ export function isValidEmail(input) {
         );
 }
 
+// commify amount wihout converting to number, use for display only
+// export const getCommifiedNumberWitDecimal = (
+//     amount: number | string,
+//     decimals = 2,
+//     trimDecimalPlaces: boolean = false,
+//     showFiatSymbol: boolean = false,
+// ) => {
+//     const amountString = amount.toString();
+//     if (trimDecimalPlaces) {
+//         const maxDecimal = calculateMaxDecimalPlaces(amountString, decimals);
+//         if (maxDecimal && maxDecimal < decimals) {
+//             decimals = maxDecimal;
+//         }
+//     }
+//     const [integer, decimal] = amountString.split(".");
+//     const commifiedInteger = integer.length > 0 ? commify(integer) : "0";
+//     const IntegerWithSymbol = showFiatSymbol ? `$${commifiedInteger}` : commifiedInteger;
+//     if (decimal && decimal.length > decimals) {
+//         return `${IntegerWithSymbol}.${decimal.slice(0, decimals)}`;
+//     }
+//     return `${IntegerWithSymbol}${decimal?.length ? `.${decimal}` : ""}`;
+// };
+
 export const _adjustV = (v: number): number => {
     if (v === 0) {
         return 27;
@@ -178,6 +211,16 @@ export const _adjustV = (v: number): number => {
         return v;
     }
 };
+
+// export const adjustVInCustomSignature = (signature: string) => {
+//     if (signature) {
+//         const { v, r, s } = ethers.utils.splitSignature(signature);
+//         const adjustedV = _adjustV(v);
+//         return ethers.utils.joinSignature({ r, s, v: adjustedV });
+//     } else {
+//         return "";
+//     }
+// };
 
 export const getNumberWitDecimal = (
     amount: number | string,
@@ -201,13 +244,16 @@ export const getNumberWitDecimal = (
     return `${IntegerWithSymbol}${decimal?.length ? `.${decimal}` : ""}`;
 };
 
-export const resolveENSWithInfura = async (ens: string) => {
-    const provider = new ethers.InfuraProvider("homestead", process.env.NEXT_PUBLIC_INFURA_TOKEN);
-    try {
-        const resolvedAddress = await provider.resolveName(ens);
-        return resolvedAddress;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
-};
+// export const resolveENSWithInfura = async (ens: string) => {
+//     const provider = new ethers.providers.InfuraProvider(
+//         "homestead",
+//         process.env.NEXT_PUBLIC_INFURA_TOKEN,
+//     );
+//     try {
+//         const resolvedAddress = await provider.resolveName(ens);
+//         return resolvedAddress;
+//     } catch (err) {
+//         console.error(err);
+//         return false;
+//     }
+// };

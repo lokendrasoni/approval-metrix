@@ -6,12 +6,24 @@ import isOwnerOfSafe from "middleware/isOwnerOfSafe";
 import Safe from "models/Safe";
 import Wallet from "models/Wallet";
 import { IWalletSchema } from "utils/types/WalletModel";
+import sendEmail from "utils/sendEmail";
 
 interface NextRequest extends NextApiRequest {
     safe: ISafeSchema;
     networkId?: number;
     operatorName?: string;
     walletAddress?: string;
+}
+
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+export function generateRandomString(length) {
+    let result = "";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
 }
 
 const initialMessage = `Hey! We are so excited to work with you. This is an invitation to your payroll details page.`;
@@ -52,7 +64,11 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
             });
         }
 
+        let contributorsToAdd = [];
+
+        //contributor to safe relation
         for (let contributor of contributors) {
+            const inviteCode = generateRandomString(6);
             let wallet: IWalletSchema;
 
             const foundWallet = await Wallet.findOne({ email: contributor?.email });
@@ -71,16 +87,23 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
             wallet.contributedSafes = newContributedSafes;
             await wallet.save();
 
+            contributorsToAdd.push({
+                wallet: wallet?._id,
+                name: contributor?.name,
+                inviteCode,
+                status: "pending",
+            });
+
             const data = {
                 to: contributor?.email?.trim()?.toLowerCase(),
                 subject: `Safe is inviting you to their payroll 🎉`,
                 template: "invite-hackathon-23",
                 "h:X-Mailgun-Variables": JSON.stringify({
-                    link: `${host}/contributor?inviteCode=${inviteCode}`,
+                    link: `${host}/contributor`,
                     titleText: `Safe is inviting you to their payroll 🎉`,
                     bodyText: initialMessage,
                     showQuote: true, // Boolean
-                    safeName: req?.safe?.safeName,
+                    safeName: safe?.safeAddress,
                     buttonText: "View Invitation",
                 }),
             };
@@ -96,6 +119,12 @@ const handler = async function (req: NextRequest, res: NextApiResponse) {
                 }
             });
         }
+
+        // safe to wallets
+
+        const existingContributors = safe?.contributors || [];
+        safe.contributors = [...existingContributors, ...contributorsToAdd];
+        await safe.save();
     } catch (err) {
         console.log("Error", err);
         return res.status(500).json({ success: false, errorMessage: err.message });

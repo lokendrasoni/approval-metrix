@@ -7,11 +7,11 @@ const clientId = process.env.NEXT_PUBLIC_WEB3_AUTH_CLIENT_ID;
 const web3auth = new Web3Auth({
     clientId,
     web3AuthNetwork:
-        process.env.NEXT_PUBLIC_NODE_ENV === "development" ? "sapphire_devnet" : "sapphire_mainnet", // mainnet, aqua,  cyan or testnet
+        process.env.NEXT_PUBLIC_NODE_ENV === "development" ? "sapphire_devnet" : "sapphire_mainnet",
     chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
         chainId: "0x1",
-        rpcTarget: "https://rpc.ankr.com/eth", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+        rpcTarget: process.env.NEXT_PUBLIC_TENDERLY_RPC,
     },
     uiConfig: {
         theme: "dark",

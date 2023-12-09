@@ -58,7 +58,11 @@ export function ContributorContextProvider({ children }) {
     useEffect(() => {
         if ((provider || isLoggedIn) && router.pathname === "/contributor") {
             router.replace("/contributor/home");
-        } else if (!provider && !isLoggedIn && router.pathname !== "/contributor") {
+        } else if (
+            !provider &&
+            !isLoggedIn &&
+            router.pathname !== "/contributor" &&
+            router.pathname.startsWith("/contributor")) {
             router.replace("/contributor");
         }
     }, [provider, router, isLoggedIn]);

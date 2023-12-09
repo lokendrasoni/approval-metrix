@@ -1,3 +1,4 @@
+require("./Wallet");
 import mongoose from "mongoose";
 import { ISafeSchema } from "utils/types/SafeModel";
 

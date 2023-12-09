@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 // This file sets a custom webpack configuration to use your Next.js app
-// with Sentry.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
@@ -231,16 +230,6 @@ const moduleExports = {
                 ],
             },
         ];
-    },
-
-    sentry: {
-        // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
-        // for client-side builds. (This will be the default starting in
-        // `@sentry/nextjs` version 8.0.0.) See
-        // https://webpack.js.org/configuration/devtool/ and
-        // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map
-        // for more information.
-        hideSourceMaps: true,
     },
 };
 

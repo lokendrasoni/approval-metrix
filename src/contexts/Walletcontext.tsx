@@ -136,9 +136,6 @@ export function WalletcontextProvider({ children }) {
                 await refetchCheckAuth();
             } else {
                 setSignedMessage(null);
-                // enqueueSnackbar(snackBarText(`Login Failed! ${data?.log}`), {
-                //     variant: "error",
-                // });
             }
         }
     };

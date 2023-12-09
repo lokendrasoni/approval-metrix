@@ -3,11 +3,13 @@ export const ME_ENDPOINT = "/api/me";
 export const LOGIN_URL = `/api/auth/login`;
 export const LOGOUT_URL = `/api/auth/logout`;
 export const CONTRIBUTOR_GET_SAFES_ENDPOINT = `/api/contributor/getSafes`;
+export const GET_SAFE_CONTRIBUTORS_ENDPOINT = `/api/getSafeContributors`;
 
 //QUERY_NAME
 export const LOGIN = "login";
 export const ME = "me";
 export const CONTRIBUTOR_GET_SAFES = "contributor-get-safes";
+export const GET_SAFE_CONTRIBUTORS = "get-safes-contributors";
 
 // Whitelisted token constants
 // USD 1, AUD 1.58 and EURO 0.95

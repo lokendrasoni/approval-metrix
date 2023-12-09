@@ -10,24 +10,23 @@ import {
     Typography,
     styled,
 } from "@mui/material";
-import {
-    AuthKitSignInData,
-    SafeAuthInitOptions,
-    SafeAuthPack,
-    SafeAuthUserInfo,
-} from "@safe-global/auth-kit";
+import { SafeAuthInitOptions, SafeAuthPack, SafeAuthUserInfo } from "@safe-global/auth-kit";
 import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
 import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useState } from "react";
+import SafeContext from "src/contexts/SafeContext";
+import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import AppBar from "./AppBar";
 
 const SafeAuth = () => {
+    const router = useRouter();
+    const { safeAuthSignInResponse, setSafeAuthSignInResponse, setSafeAddress } = useContext(
+        SafeContext,
+    ) as SafeContextTypes;
     const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
         !!safeAuthPack?.isAuthenticated,
-    );
-    const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState<AuthKitSignInData | null>(
-        null,
     );
     const [userInfo, setUserInfo] = useState<SafeAuthUserInfo | null>(null);
     const [chainId, setChainId] = useState<string | undefined>();
@@ -315,6 +314,10 @@ const SafeAuth = () => {
                                             alignContent: "center",
                                             justifyContent: "center",
                                             fontSize: "30px",
+                                        }}
+                                        onClick={() => {
+                                            setSafeAddress(i);
+                                            router.push("/dao/quick-send");
                                         }}
                                     >
                                         gor:{i}

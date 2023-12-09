@@ -1,12 +1,5 @@
-
-
-import React from 'react'
-import AppBar from '../Welcome/AppBar'
-
 const Home = () => {
-  return (
-     
-  )
-}
+    return <></>;
+};
 
-export default Home
+export default Home;

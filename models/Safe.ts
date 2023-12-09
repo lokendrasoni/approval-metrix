@@ -1,7 +1,5 @@
-require("./Wallet");
 import mongoose from "mongoose";
 import { ISafeSchema } from "utils/types/SafeModel";
-
 require("./Wallet");
 
 // status =   enum: ["pending", "successful", "rejected", "failed"],

@@ -1,4 +1,14 @@
-import { Button, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Grid,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+} from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -6,6 +16,7 @@ import GoogleAuth from "src/components/GoogleAuth";
 import Sidebar from "src/components/Sidebar";
 import AddContacts from "src/components/addContacts";
 import AddGoogleContacts from "src/components/addGoogleContacts";
+import { theme } from "src/constants/colors";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { SET_SAFE_CONTRIBUTORS_ENDPOINT } from "src/queries/constants";
@@ -23,7 +34,7 @@ export default function Contributors() {
 
     const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext) as SafeContextTypes;
 
-    const { data, refetch } = useGetSafeContributors({
+    const { data, isLoading, refetch } = useGetSafeContributors({
         "x-par-safe-address": safeAddress,
         "x-par-network-id": 5,
         "x-par-wallet-address": safeAuthSignInResponse?.eoa,
@@ -61,6 +72,11 @@ export default function Contributors() {
             },
             body: JSON.stringify({ contributors }),
         });
+        setShowAddContactsModal(false);
+        setFields([{ name: "", email: "" }]);
+        setShowGoogleModal(false);
+        setSelectedContacts([]);
+        refetch();
         return (result as any)?.data;
     }
 
@@ -78,16 +94,12 @@ export default function Contributors() {
         console.log(fields);
         const resultData = setContributorSafes(fields);
         console.log(resultData);
-        setShowAddContactsModal(false);
-        setFields([{ name: "", email: "" }]);
         refetch();
     };
     const addGoogleContacts = async () => {
         console.log(selectedContacts);
         const resultData = setContributorSafes(selectedContacts);
         console.log(resultData);
-        setShowAddContactsModal(false);
-        setSelectedContacts;
         refetch();
     };
 
@@ -126,7 +138,7 @@ export default function Contributors() {
                         <GoogleAuth />
                         <Button
                             variant="contained"
-                            sx={{ marginTop: "10px" }}
+                            sx={{ marginTop: "10px", backgroundColor: theme.grey[900] }}
                             onClick={() => setShowAddContactsModal(true)}
                         >
                             Add Contacts
@@ -134,13 +146,17 @@ export default function Contributors() {
                     </Grid>
                 </Grid>
                 <hr style={{ marginTop: "0", marginBottom: "20px" }} />
-                {data && data?.contributors?.length > 0 ? (
+                {isLoading ? (
+                    <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+                        <CircularProgress />
+                    </Box>
+                ) : data && data?.contributors?.length > 0 ? (
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                         <TableHead>
                             <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Address</TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

@@ -1,6 +1,6 @@
-require("./Safe");
 import mongoose from "mongoose";
 import { IWalletSchema } from "utils/types/WalletModel";
+require("./Safe");
 
 const WalletSchema = new mongoose.Schema(
     {

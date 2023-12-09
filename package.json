@@ -37,6 +37,7 @@
         "@web3auth/openlogin-adapter": "^7.2.0",
         "@web3auth/safeauth-embed": "^0.0.0",
         "aws-sdk": "^2.1236.0",
+        "bignumber.js": "^9.1.2",
         "cookie": "^0.5.0",
         "decimal.js-light": "^2.5.1",
         "ethers": "^6.7.1",

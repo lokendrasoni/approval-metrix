@@ -133,24 +133,31 @@ const SafeAuth = () => {
         setSafeAuthSignInResponse(null);
     };
 
+    const isLoggedIn = !!safeAuthPack?.isAuthenticated;
+
     return (
         <>
-            <Box sx={{ display: "flex", heigth: "100px" }}>
-                <Box
-                    sx={{
-                        width: "70%",
-                        display: "flex",
-                        alignItems: "center",
-                        paddingLeft: "400px",
-                    }}
-                >
-                    <StyledAppBar position="static" color="default">
-                        <Typography variant="h3" pl={4} fontWeight={700}>
-                            Auth Provider Demo
+            {isLoggedIn && (
+                <Box sx={{ display: "flex", heigth: "200px", background: "grey" }}>
+                    <Box
+                        sx={{
+                            width: "70%",
+                            display: "flex",
+                            alignItems: "center",
+                            paddingLeft: "400px",
+                        }}
+                    >
+                        <Typography
+                            variant="h3"
+                            pl={25}
+                            fontWeight={700}
+                            sx={{ textDecoration: "white" }}
+                        >
+                            Buildoors...
                         </Typography>
-                    </StyledAppBar>
+                    </Box>
                 </Box>
-            </Box>
+            )}
             <AppBar
                 onLogin={login}
                 onLogout={logout}
@@ -158,7 +165,7 @@ const SafeAuth = () => {
                 isLoggedIn={!!safeAuthPack?.isAuthenticated}
                 eoa={safeAuthSignInResponse?.eoa}
             />
-            {safeAuthSignInResponse?.eoa && (
+            {isLoggedIn && (
                 <TableContainer
                     sx={{
                         marginTop: "40px",
@@ -228,7 +235,7 @@ const StyledAppBar = styled(MuiAppBar)`
     && {
         position: sticky;
         top: 0;
-        background: ${({ theme }) => theme.palette.background.paper};
+        background: "grey";
         height: 70px;
         align-items: center;
         justify-content: center;

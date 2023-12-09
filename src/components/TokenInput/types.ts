@@ -1,5 +1,3 @@
-import { ThemeOptions } from "@mui/material/styles";
-
 type TokenInputOptionsProps = {
     name?: string;
     symbol?: string;
@@ -40,7 +38,6 @@ export interface TokenInputProps {
     helperText?: string;
     getSelectedOption?(...arg): void;
     infoText?: string;
-    theme?: ThemeOptions;
     seperator?: boolean;
     selectedItemsText?: string;
     placeholder?: string;

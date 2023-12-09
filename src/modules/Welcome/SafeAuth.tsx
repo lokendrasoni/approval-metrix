@@ -1,16 +1,25 @@
-import { useEffect, useState } from "react";
-import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
-import { Box, Button, Divider, Grid, Typography } from "@mui/material";
-import { EthHashInfo } from "@safe-global/safe-react-components";
-import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
-import AppBar from "./AppBar";
+import {
+    Box,
+    AppBar as MuiAppBar,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    styled,
+} from "@mui/material";
 import {
     AuthKitSignInData,
     SafeAuthInitOptions,
     SafeAuthPack,
     SafeAuthUserInfo,
 } from "@safe-global/auth-kit";
-import { getSafeTxV4TypedData, getTypedData, getV3TypedData } from "./typedData";
+import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
+import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
+import { useEffect, useState } from "react";
+import AppBar from "./AppBar";
 
 const SafeAuth = () => {
     const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
@@ -84,6 +93,7 @@ const SafeAuth = () => {
         const safeAuthCheckFunc = async () => {
             const web3Provider = safeAuthPack.getProvider();
             const userInfo = await safeAuthPack.getUserInfo();
+            console.log("userINfo", userInfo);
 
             setUserInfo(userInfo);
 
@@ -232,208 +242,106 @@ const SafeAuth = () => {
         setConsoleMessage(typeof message === "string" ? message : JSON.stringify(message, null, 2));
     };
 
+    console.log(safeAuthSignInResponse, "obj");
     return (
         <>
+            <Box sx={{ display: "flex", heigth: "100px" }}>
+                <Box
+                    sx={{
+                        width: "70%",
+                        display: "flex",
+                        alignItems: "center",
+                        paddingLeft: "400px",
+                    }}
+                >
+                    <StyledAppBar position="static" color="default">
+                        <Typography variant="h3" pl={4} fontWeight={700}>
+                            Auth Provider Demo
+                        </Typography>
+                    </StyledAppBar>
+                </Box>
+            </Box>
             <AppBar
                 onLogin={login}
                 onLogout={logout}
                 userInfo={userInfo || undefined}
                 isLoggedIn={!!safeAuthPack?.isAuthenticated}
+                eoa={safeAuthSignInResponse?.eoa}
             />
-            {
-                safeAuthSignInResponse?.eoa && <div>Hello</div>
-                // <Grid container>
-                //     <Grid item md={4} p={4}>
-                //         <Typography variant="h3" color="secondary" fontWeight={700}>
-                //             Signer
-                //         </Typography>
-                //         <Divider sx={{ my: 3 }} />
-                //         <EthHashInfo
-                //             address={safeAuthSignInResponse.eoa}
-                //             showCopyButton
-                //             showPrefix={false}
-                //         />
-                //         <Divider sx={{ my: 2 }} />
-                //         <Typography variant="h4" color="primary" fontWeight="bold">
-                //             Chain{" "}
-                //             <Typography component="span" color="secondary" fontSize="1.45rem">
-                //                 {chainId}
-                //             </Typography>
-                //         </Typography>
-                //         <Typography variant="h4" color="primary" sx={{ my: 1 }} fontWeight="bold">
-                //             Balance{" "}
-                //             <Typography component="span" color="secondary" fontSize="1.45rem">
-                //                 {balance}
-                //             </Typography>
-                //         </Typography>
-                //         <Divider sx={{ my: 2 }} />
-                //         <Button
-                //             variant="contained"
-                //             fullWidth
-                //             color="secondary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => getUserInfo()}
-                //         >
-                //             getUserInfo
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => getAccounts()}
-                //         >
-                //             eth_accounts
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => getChainId()}
-                //         >
-                //             eth_chainId
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => signMessage("Hello World", "personal_sign")}
-                //         >
-                //             personal_sign
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() =>
-                //                 signMessage(
-                //                     "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
-                //                     "eth_sign",
-                //                 )
-                //             }
-                //         >
-                //             eth_sign
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => signMessage(getTypedData(), "eth_signTypedData")}
-                //         >
-                //             eth_signTypedData
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() =>
-                //                 signMessage(getV3TypedData(chainId || ""), "eth_signTypedData_v3")
-                //             }
-                //         >
-                //             eth_signTypedData_v3
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() =>
-                //                 signMessage(
-                //                     getSafeTxV4TypedData(chainId || ""),
-                //                     "eth_signTypedData_v4",
-                //                 )
-                //             }
-                //         >
-                //             eth_signTypedData_v4
-                //         </Button>
-                //         <Button
-                //             fullWidth
-                //             variant="contained"
-                //             color="primary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => sendTransaction()}
-                //         >
-                //             eth_sendTransaction
-                //         </Button>
-                //         <Divider sx={{ my: 2 }} />
-                //         <Button
-                //             variant="outlined"
-                //             fullWidth
-                //             color="secondary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => switchChain()}
-                //         >
-                //             wallet_switchEthereumChain
-                //         </Button>{" "}
-                //         <Button
-                //             variant="outlined"
-                //             fullWidth
-                //             color="secondary"
-                //             sx={{ my: 1 }}
-                //             onClick={() => addChain()}
-                //         >
-                //             wallet_addEthereumChain
-                //         </Button>
-                //     </Grid>
-                //     <Grid item md={3} p={4}>
-                //         <>
-                //             <Typography variant="h3" color="secondary" fontWeight={700}>
-                //                 Safe accounts
-                //             </Typography>
-                //             <Divider sx={{ my: 2 }} />
-                //             {safeAuthSignInResponse?.safes?.length ? (
-                //                 safeAuthSignInResponse?.safes?.map((safe, index) => (
-                //                     <>
-                //                         <Box sx={{ my: 3 }} key={index}>
-                //                             <EthHashInfo
-                //                                 address={safe}
-                //                                 showCopyButton
-                //                                 shortAddress={true}
-                //                             />
-                //                         </Box>
-                //                         <Button
-                //                             variant="contained"
-                //                             fullWidth
-                //                             color="primary"
-                //                             onClick={() => signAndExecuteSafeTx(index)}
-                //                         >
-                //                             Sign and execute
-                //                         </Button>
-                //                         <Divider sx={{ my: 3 }} />
-                //                     </>
-                //                 ))
-                //             ) : (
-                //                 <Typography variant="body1" color="secondary" fontWeight={700}>
-                //                     No Available Safes
-                //                 </Typography>
-                //             )}
-                //         </>
-                //     </Grid>
-                //     <Grid item md={5} p={4}>
-                //         <Typography variant="h3" color="secondary" fontWeight={700}>
-                //             Console
-                //         </Typography>
-                //         <Divider sx={{ my: 2 }} />
-                //         <Typography variant="body1" color="primary" fontWeight={700}>
-                //             {consoleTitle}
-                //         </Typography>
-                //         <Typography
-                //             variant="body1"
-                //             color="secondary"
-                //             sx={{ mt: 2, overflowWrap: "break-word" }}
-                //         >
-                //             {consoleMessage}
-                //         </Typography>
-                //     </Grid>
-                // </Grid>
-            }
+            {safeAuthSignInResponse?.eoa && (
+                <TableContainer
+                    sx={{
+                        marginTop: "40px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Table
+                        sx={{
+                            minWidth: 650,
+                            border: "1px solid grey",
+                            borderRadius: 10,
+                            width: "50%",
+                        }}
+                        aria-label="simple table"
+                    >
+                        <TableHead>
+                            <TableRow>
+                                <TableCell
+                                    sx={{
+                                        fontWeight: "bold",
+                                        display: "flex",
+                                        alignContent: "center",
+                                        justifyContent: "center",
+                                        fontSize: "30px",
+                                    }}
+                                >
+                                    Safes
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {safeAuthSignInResponse?.safes.map(i => (
+                                <TableRow
+                                    key={i}
+                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                >
+                                    <TableCell
+                                        component="th"
+                                        scope="row"
+                                        sx={{
+                                            fontWeight: "bold",
+                                            display: "flex",
+                                            alignContent: "center",
+                                            justifyContent: "center",
+                                            fontSize: "30px",
+                                        }}
+                                    >
+                                        gor:{i}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
         </>
     );
 };
+
+const StyledAppBar = styled(MuiAppBar)`
+    && {
+        position: sticky;
+        top: 0;
+        background: ${({ theme }) => theme.palette.background.paper};
+        height: 70px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        border-bottom: 2px solid ${({ theme }) => theme.palette.background.paper};
+        box-shadow: none;
+    }
+`;
 
 export default SafeAuth;

@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 
+import { ContributorContextProvider } from "src/contexts/ContributorContext";
 import createEmotionCache from "../styles/createEmotionCache";
 const CssBaseline = dynamic(() => import("@mui/material/CssBaseline"));
 
@@ -45,10 +46,12 @@ export default function AppRoot(props: any) {
             />
             <CacheProvider value={emotionCache}>
                 <QueryClientProvider client={queryClient}>
-                    {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-                    <CssBaseline />
+                    <ContributorContextProvider>
+                        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                        <CssBaseline />
 
-                    <Component {...pageProps} />
+                        <Component {...pageProps} />
+                    </ContributorContextProvider>
                 </QueryClientProvider>
             </CacheProvider>
         </>

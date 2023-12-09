@@ -1,5 +1,5 @@
 import { createIcon } from "@download/blockies";
-import { isHexString } from "ethers/lib/utils";
+import { isHexString } from "ethers";
 import { memo, useEffect, useMemo, useState } from "react";
 
 type Props = {

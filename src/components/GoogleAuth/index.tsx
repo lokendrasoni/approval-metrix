@@ -25,7 +25,7 @@ const GoogleAuth = () => {
 
 
   return (
-    <Button variant="contained" color="primary" onClick={fetchContacts}>Import Contacts From Google</Button>
+    <Button variant="contained" color="primary" onClick={fetchContacts}> Import Google Contacts</Button>
   )
 }
 

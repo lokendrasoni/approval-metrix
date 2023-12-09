@@ -17,4 +17,5 @@ export type SafeContextTypes = {
     setEthAdapter: Function;
     safeService: SafeApiKit;
     setSafeService: Function;
+    tokensInSafe: any;
 };

@@ -1,51 +1,184 @@
-import { Box, MenuItem, Select, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Typography,
+} from "@mui/material";
 import { useContext, useState } from "react";
+import TokenInput from "src/components/TokenInput";
+import TokenLogo from "src/components/TokenLogo";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
+import { minifyAddress } from "src/helpers/utils/web3Utils";
 import { useGetSafeContributors } from "src/queries/safes/api";
 
 export default function QuickSend() {
-    const { safeAddress, safeAuthSignInResponse } = useContext(SafeContext) as SafeContextTypes;
+    const { safeAddress, safeAuthSignInResponse, tokensInSafe } = useContext(
+        SafeContext,
+    ) as SafeContextTypes;
     const [selectedContributor, setSelectedContributor] = useState("");
     const [amount, setAmount] = useState("");
     const [token, setToken] = useState("gETH");
-    const { data, isSuccess } = useGetSafeContributors({
+    const { data, isSuccess, isLoading } = useGetSafeContributors({
         "x-par-safe-address": safeAddress,
         "x-par-network-id": 5,
         "x-par-wallet-address": safeAuthSignInResponse?.eoa,
     });
 
+    const [payments, setPayments] = useState([]);
+
+    const handleAdd = () => {
+        setPayments(v => {
+            v.push({
+                to: data?.contributors?.find(d => d.walletAddress === selectedContributor)
+                    ?.walletAddress,
+                name:
+                    data?.contributors?.find(d => d.walletAddress === selectedContributor)?.name ||
+                    data?.contributors?.find(d => d.walletAddress === selectedContributor)?.email,
+                amount: parseFloat(amount) * Math.pow(10, parseInt(tokensInSafe[token]?.decimals)),
+                token: tokensInSafe[token],
+            });
+            return v;
+        });
+        setAmount("");
+        setSelectedContributor("");
+        setToken("");
+    };
+
     return (
         <>
-            {!isSuccess ? (
-                <>
-                    <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                        <Box
-                            display={"flex"}
-                            flexDirection={"column"}
-                            alignItems={"center"}
-                            gap={"8px"}
-                        >
-                            <Select
-                                value={selectedContributor}
-                                onChange={e => setSelectedContributor(e.target.value)}
+            {isLoading ? (
+                <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+                    <CircularProgress />
+                </Box>
+            ) : isSuccess && data?.success ? (
+                data?.contributors?.find(c => !!c.walletAddress) ? (
+                    <>
+                        <Box display={"flex"} justifyContent={"space-around"} alignItems={"center"}>
+                            <Box
+                                display={"flex"}
+                                flexDirection={"column"}
+                                alignItems={"center"}
+                                gap={"8px"}
                             >
-                                <MenuItem value={""}>Select a contributor</MenuItem>
-                            </Select>
-                            {/* <TokenInput
-                                label="Amount"
-                                amount={amount}
-                                handleAmountChange={(e, v) => setAmount(v)}
-                                tokensInSafe={}
-                                token={token}
-                                handleTokenChange={(e, v) => {
-                                    setToken(v);
-                                }}
-                                options={}
-                            /> */}
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">
+                                        Select Contributor
+                                    </InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={selectedContributor}
+                                        label="Select Contributor"
+                                        onChange={e => setSelectedContributor(e.target.value)}
+                                    >
+                                        {data?.contributors
+                                            ?.filter(contributor => !!contributor?.walletAddress)
+                                            ?.map((contributor, key) => {
+                                                return (
+                                                    <MenuItem
+                                                        key={key}
+                                                        value={contributor?.walletAddress || ""}
+                                                    >
+                                                        {contributor?.name ||
+                                                            contributor?.email ||
+                                                            contributor?.walletAddress}
+                                                    </MenuItem>
+                                                );
+                                            })}
+                                    </Select>
+                                </FormControl>
+                                <TokenInput
+                                    label="Amount"
+                                    amount={amount}
+                                    handleAmountChange={(e, v) => setAmount(v)}
+                                    tokensInSafe={tokensInSafe}
+                                    token={token}
+                                    handleTokenChange={(e, v) => {
+                                        setToken(v);
+                                    }}
+                                    options={Object.keys(tokensInSafe).map(token => {
+                                        return {
+                                            name: token,
+                                            symbol: tokensInSafe?.[token]?.symbol,
+                                            logoUri: tokensInSafe?.[token]?.logoUri,
+                                            decimals: tokensInSafe?.[token]?.decimals,
+                                            tokenAddress: tokensInSafe?.[token]?.tokenAddress,
+                                            fiatConversion: "0",
+                                        };
+                                    })}
+                                />
+                                <Box display={"flex"} gap={"10px"}>
+                                    <Button variant="contained" onClick={handleAdd}>
+                                        Add
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="secondary"
+                                        onClick={() => {
+                                            setAmount("");
+                                            setSelectedContributor("");
+                                            setToken("");
+                                        }}
+                                    >
+                                        Clear
+                                    </Button>
+                                </Box>
+                            </Box>
+                            <Box display={"flex"} gap={"4px"} flexDirection={"column"}>
+                                {payments?.map((payment, index) => {
+                                    return (
+                                        <Box
+                                            display={"flex"}
+                                            key={index}
+                                            alignItems={"center"}
+                                            gap={"20px"}
+                                        >
+                                            <Typography variant="h5">
+                                                {payment?.name || payment?.to}(
+                                                {minifyAddress(payment?.to)})
+                                            </Typography>
+                                            <TokenLogo
+                                                imageUrl={payment?.token?.logoUri}
+                                                size="20px"
+                                                brokenLogo={payment?.token?.brokenLogo}
+                                                wrapperStyle={{
+                                                    " span": { verticalAlign: "baseline" },
+                                                }}
+                                            />
+                                            <Typography>
+                                                {payment?.amount} {payment?.token?.symbol}
+                                            </Typography>
+                                        </Box>
+                                    );
+                                })}
+
+                                {payments?.length ? (
+                                    <Box display={"flex"} gap={"10px"}>
+                                        <Button variant="contained">Save</Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="secondary"
+                                            onClick={() => {
+                                                setPayments([]);
+                                            }}
+                                        >
+                                            Clear
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <></>
+                                )}
+                            </Box>
                         </Box>
-                    </Box>
-                </>
+                    </>
+                ) : (
+                    <Typography variant="h6">No contributor with wallet address found</Typography>
+                )
             ) : (
                 <Typography variant="h6">Please add contributors to send payments</Typography>
             )}

@@ -79,10 +79,7 @@ export const renderOptions = (
                             }}
                         >
                             {"  "}(
-                            {ethers.utils.isAddress(tokenAddress)
-                                ? minifyAddress(tokenAddress)
-                                : symbol}
-                            )
+                            {ethers.isAddress(tokenAddress) ? minifyAddress(tokenAddress) : symbol})
                         </Typography>
                     </div>
                 </StyledMenuItem>

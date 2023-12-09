@@ -117,7 +117,7 @@ const TokenInput = ({
                 >
                     <TokenLogo
                         imageUrl={tokensInSafe[selectedToken]?.logoUri}
-                        size="16px"
+                        size="20px"
                         brokenLogo={tokensInSafe[selectedToken]?.brokenLogo}
                         wrapperStyle={{ " span": { verticalAlign: "baseline" } }}
                     />

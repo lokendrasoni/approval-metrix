@@ -3,6 +3,7 @@ export const ME_ENDPOINT = "/api/me";
 export const LOGIN_URL = `/api/auth/login`;
 export const LOGOUT_URL = `/api/auth/logout`;
 export const CONTRIBUTOR_GET_SAFES_ENDPOINT = `/api/contributor/getSafes`;
+export const SET_SAFE_CONTRIBUTORS_ENDPOINT = `/api/save-contributor-and-send-invite`;
 export const GET_SAFE_CONTRIBUTORS_ENDPOINT = `/api/getSafeContributor`;
 export const GET_TOKENS_BY_SAFE = "get-tokens-by-safe";
 
@@ -10,6 +11,7 @@ export const GET_TOKENS_BY_SAFE = "get-tokens-by-safe";
 export const LOGIN = "login";
 export const ME = "me";
 export const CONTRIBUTOR_GET_SAFES = "contributor-get-safes";
+export const CONTRIBUTOR_SET_SAFES = "contributor-set-safes";
 export const GET_SAFE_CONTRIBUTORS = "get-safes-contributors";
 
 // Whitelisted token constants

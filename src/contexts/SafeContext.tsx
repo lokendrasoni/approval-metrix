@@ -1,19 +1,24 @@
-import { AuthKitSignInData } from "@safe-global/auth-kit";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
-import { SafeContextTypes } from "./types/SafeContextTyes";
-import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
+import useLocalStorage from "src/hooks/useLocalStorage";
 import { WHITELISTED_TOKENS } from "src/queries/constants";
 import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
 import SafeApiKit from "@safe-global/api-kit";
 import { getGnosisBaseURL } from "src/helpers/gnosisUrl";
+import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
+import { SafeContextTypes } from "./types/SafeContextTyes";
 
 const SafeContext = createContext<SafeContextTypes | {}>({});
 
 export function SafeContextProvider({ children }) {
     const router = useRouter();
-    const [safeAddress, setSafeAddress] = useState<string>("");
-    const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState<AuthKitSignInData | null>(
+    // const [safeAddress, setSafeAddress] = useState<string>("");
+    const [safeAddress, setSafeAddress] = useLocalStorage("safeAddress", "");
+    // const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState<AuthKitSignInData | null>(
+    //     null,
+    // );
+    const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useLocalStorage(
+        "safeAuthSignInResponse",
         null,
     );
     const [safeSdk, setSafeSdk] = useState<Safe>(null);
@@ -101,6 +106,8 @@ export function SafeContextProvider({ children }) {
     useEffect(() => {
         if (router?.pathname !== "/" && router?.pathname?.startsWith("/dao") && !safeAddress) {
             router.replace("/");
+        } else if (router?.pathname === "/dao/contributor" && safeAddress) {
+            // router.replace("/dao/contributors");
         }
     }, [safeAddress, router]);
 

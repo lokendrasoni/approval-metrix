@@ -23,7 +23,7 @@ export default function AppRoot(props: any) {
     return (
         <>
             <Head>
-                <title>Approval Metrix</title>
+                <title>Buildoors</title>
                 <meta name="description" content="Magically simplify payroll & payments" />
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
                 <link rel="icon" href="/favicon.ico" />

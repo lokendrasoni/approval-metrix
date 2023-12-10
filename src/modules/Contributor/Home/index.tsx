@@ -23,17 +23,9 @@ const minifyAddress = (address, middleChars = 6, endChars = 4) => {
     )}`;
 };
 
-const replaceAddresswithMinification = (string, middleChars = 7, endChars = 4) => {
-    if (!string) return "";
-
-    return string.replaceAll(/0x[a-zA-Z0-9]{64}/g, match => {
-        return minifyAddress(match, middleChars, endChars);
-    });
-};
-
 export default function ContributorHome() {
-    const { data, isSuccess } = useGetContributorSafes();
-    const { wallet, logout, web3auth } = useContext(ContributorContext) as ContributorContextTypes;
+    const { data } = useGetContributorSafes();
+    const { wallet, logout } = useContext(ContributorContext) as ContributorContextTypes;
 
     return (
         <>
@@ -115,6 +107,7 @@ export default function ContributorHome() {
                             return (
                                 <TableRow
                                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                    key={i?.safeAddress}
                                 >
                                     <TableCell
                                         component="th"
@@ -129,9 +122,6 @@ export default function ContributorHome() {
                                         }}
                                     >
                                         Safe Address:{i?.safeAddress}
-                                        <Button variant="contained" sx={{ ml: "25px" }}>
-                                            View Payments
-                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             );

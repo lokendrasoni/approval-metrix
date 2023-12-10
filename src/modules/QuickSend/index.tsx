@@ -15,9 +15,8 @@ import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import { stringNumberToWei, weiToString } from "src/helpers/utils/bignumberUtils";
 import { minifyAddress } from "src/helpers/utils/web3Utils";
-import { useGetSafeContributors } from "src/queries/safes/api";
 import useMultisigTransaction from "src/hooks/useMultisigTransaction";
-import CustomButton from "src/components/customButton";
+import { useGetSafeContributors } from "src/queries/safes/api";
 
 export default function QuickSend() {
     const { safeAddress, safeAuthSignInResponse, tokensInSafe } = useContext(
@@ -96,8 +95,8 @@ export default function QuickSend() {
                             sx={{
                                 border: "1px solid #1a202c",
                                 padding: "20px",
-                                width: "max-content",
                                 borderRadius: "10px",
+                                gap: "20px",
                             }}
                         >
                             <Box

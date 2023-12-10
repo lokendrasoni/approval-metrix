@@ -1,6 +1,5 @@
 import {
     Box,
-    AppBar as MuiAppBar,
     Table,
     TableBody,
     TableCell,
@@ -8,12 +7,12 @@ import {
     TableHead,
     TableRow,
     Typography,
-    styled,
 } from "@mui/material";
 import { SafeAuthInitOptions, SafeAuthPack, SafeAuthUserInfo } from "@safe-global/auth-kit";
 import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { theme } from "src/constants/colors";
 import SafeContext from "src/contexts/SafeContext";
 import { SafeContextTypes } from "src/contexts/types/SafeContextTyes";
 import AppBar from "./AppBar";
@@ -140,22 +139,23 @@ const SafeAuth = () => {
     return (
         <>
             {isLoggedIn && (
-                <Box sx={{ display: "flex", heigth: "200px", background: "grey" }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        heigth: "200px",
+                        paddingTop: "10px",
+                        background: theme.grey[900],
+                    }}
+                >
                     <Box
                         sx={{
                             width: "70%",
                             display: "flex",
-                            alignItems: "center",
-                            paddingLeft: "400px",
+                            paddingLeft: "40px",
                         }}
                     >
-                        <Typography
-                            variant="h3"
-                            pl={25}
-                            fontWeight={700}
-                            sx={{ textDecoration: "white" }}
-                        >
-                            Buildoors...
+                        <Typography variant="h3" fontWeight={700} sx={{ color: "white" }}>
+                            Buildoors!
                         </Typography>
                     </Box>
                 </Box>
@@ -172,8 +172,7 @@ const SafeAuth = () => {
                     sx={{
                         marginTop: "40px",
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        marginLeft: "40px",
                     }}
                 >
                     <Table
@@ -191,12 +190,10 @@ const SafeAuth = () => {
                                     sx={{
                                         fontWeight: "bold",
                                         display: "flex",
-                                        alignContent: "center",
-                                        justifyContent: "center",
-                                        fontSize: "30px",
+                                        fontSize: "24px",
                                     }}
                                 >
-                                    Safes
+                                    Available Safes
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -210,15 +207,16 @@ const SafeAuth = () => {
                                         component="th"
                                         scope="row"
                                         sx={{
-                                            fontWeight: "bold",
                                             display: "flex",
-                                            alignContent: "center",
-                                            justifyContent: "center",
-                                            fontSize: "30px",
+                                            fontSize: "18px",
+                                            cursor: "pointer",
+                                            "&:hover": {
+                                                color: "blue",
+                                            },
                                         }}
                                         onClick={() => {
                                             setSafeAddress(i);
-                                            router.push("/dao/quick-send");
+                                            router.push("/dao/contributors");
                                         }}
                                     >
                                         gor:{i}
@@ -232,19 +230,5 @@ const SafeAuth = () => {
         </>
     );
 };
-
-const StyledAppBar = styled(MuiAppBar)`
-    && {
-        position: sticky;
-        top: 0;
-        background: "grey";
-        height: 70px;
-        align-items: center;
-        justify-content: center;
-        flex-direction: row;
-        border-bottom: 2px solid ${({ theme }) => theme.palette.background.paper};
-        box-shadow: none;
-    }
-`;
 
 export default SafeAuth;

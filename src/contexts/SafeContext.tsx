@@ -1,13 +1,13 @@
+import SafeApiKit from "@safe-global/api-kit";
+import { SafeAuthPack } from "@safe-global/auth-kit";
+import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
+import { getGnosisBaseURL } from "src/helpers/gnosisUrl";
 import useLocalStorage from "src/hooks/useLocalStorage";
 import { WHITELISTED_TOKENS } from "src/queries/constants";
-import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
-import SafeApiKit from "@safe-global/api-kit";
-import { getGnosisBaseURL } from "src/helpers/gnosisUrl";
 import { useGetTokensAndPriceBySafe } from "src/queries/tokens/api";
 import { SafeContextTypes } from "./types/SafeContextTyes";
-import { SafeAuthPack } from "@safe-global/auth-kit";
 
 const SafeContext = createContext<SafeContextTypes | {}>({});
 
@@ -62,7 +62,7 @@ export function SafeContextProvider({ children }) {
             await safeAuthPack?.signOut();
             router.push("/");
         }
-        if (!ethAdapter || (!safeAuthPack && router.pathname?.startsWith("/dao"))) {
+        if (!ethAdapter || (!safeAuthPack && router.pathname?.startsWith("/dao") && !safeAddress)) {
             logout();
         }
     }, []);

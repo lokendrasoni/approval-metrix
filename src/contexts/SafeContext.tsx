@@ -1,6 +1,5 @@
 import SafeApiKit from "@safe-global/api-kit";
-import { SafeAuthPack } from "@safe-global/auth-kit";
-import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
+import Safe from "@safe-global/protocol-kit";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { getGnosisBaseURL } from "src/helpers/gnosisUrl";
@@ -25,8 +24,10 @@ export function SafeContextProvider({ children }) {
     const [safeSdk, setSafeSdk] = useState<Safe>(null);
 
     const [provider, setProvider] = useState(null);
-    const [ethAdapter, setEthAdapter] = useState<EthersAdapter | null>(null);
-    const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
+    // const [ethAdapter, setEthAdapter] = useState<EthersAdapter | null>(null);
+    const [ethAdapter, setEthAdapter] = useLocalStorage("ethAdapter", null);
+    // const [safeAuthPack, setSafeAuthPack] = useState<SafeAuthPack | undefined>();
+    const [safeAuthPack, setSafeAuthPack] = useLocalStorage("safeAuthPack", null);
 
     const [tokensInSafe, setTokensInSafe] = useState({});
     const { data, isSuccess, isError, isLoading } = useGetTokensAndPriceBySafe(
@@ -62,7 +63,10 @@ export function SafeContextProvider({ children }) {
             await safeAuthPack?.signOut();
             router.push("/");
         }
-        if (!ethAdapter || (!safeAuthPack && router.pathname?.startsWith("/dao") && !safeAddress)) {
+        if (
+            !ethAdapter ||
+            (!safeAuthPack && router.pathname == "/dao/quick-send" && !safeAddress)
+        ) {
             logout();
         }
     }, []);
